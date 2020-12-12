@@ -18,7 +18,11 @@ import java.util.logging.Logger;
  * @author abdelrahmanelnagdy
  */
 public class MainServer extends Thread {
-
+    public static int onlinePlayers;
+    public static int offlinePlayers;
+    public static int availablePlayers;
+    private GameHandler handler;
+    private DbConnection.DbConnectionHandler dbConnection;
     static Vector<GameHandler> SocketVector;
     ServerSocket myServerSocket;
     Socket s;

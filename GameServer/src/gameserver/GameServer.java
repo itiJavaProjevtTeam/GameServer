@@ -19,7 +19,7 @@ import javafx.stage.Stage;
 public class GameServer extends Application {
     @Override
     public void start(Stage stage) throws Exception {
-        Parent root = new GameServerGUI();
+        Parent root = new GameServerUI();
         
         Scene scene = new Scene(root);
         
