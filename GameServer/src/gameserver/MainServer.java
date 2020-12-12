@@ -12,6 +12,8 @@ import java.net.Socket;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import DbConnection.DbConnectionHandler;
+import java.sql.SQLException;
 
 /**
  *
@@ -20,18 +22,24 @@ import java.util.logging.Logger;
 public class MainServer extends Thread {
     public static int onlinePlayers;
     public static int offlinePlayers;
-    public static int availablePlayers;
     private GameHandler handler;
-    private DbConnection.DbConnectionHandler dbConnection;
+     DbConnectionHandler dbConnection;
     static Vector<GameHandler> SocketVector;
     ServerSocket myServerSocket;
     Socket s;
 
     public MainServer() {
         try {
-            myServerSocket = new ServerSocket(5011);
-            SocketVector = new Vector<GameHandler>();
-        } catch (IOException ex) {
+            try {
+                myServerSocket = new ServerSocket(5011);
+                SocketVector = new Vector<GameHandler>();
+            } catch (IOException ex) {
+                Logger.getLogger(MainServer.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            dbConnection =  DbConnectionHandler.CreateConnection();
+            onlinePlayers = dbConnection.getOnlinePlayers();
+            offlinePlayers = dbConnection.getOFFlinePlayers();
+        } catch (SQLException ex) {
             Logger.getLogger(MainServer.class.getName()).log(Level.SEVERE, null, ex);
         }
 
