@@ -147,13 +147,17 @@ public class DbConnectionHandler {
     
     
     //EX: player (x) has played his (2nd) move in position (3)
-    public void AddMove(long GID, int MoveNum, int POS, String Player) throws SQLException {
+    public void AddMove(long GID, int MoveNum, int POS, String Player) {
        
+        try {
             Statement stmt = con.createStatement();
             String queryString = new String("insert into Moves (GID,MoveNum,POS,Player) values(" + GID + "," + MoveNum + "," + POS + "," + "'" + Player + "')");
             int rs = stmt.executeUpdate(queryString);
             stmt.close();
             con.close();
+        } catch (SQLException ex) {
+            Logger.getLogger(DbConnectionHandler.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     
     //Recorded Moves
