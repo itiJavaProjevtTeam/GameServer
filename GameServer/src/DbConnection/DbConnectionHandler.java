@@ -31,14 +31,6 @@ public class DbConnectionHandler {
     
      /* *****************************Handling Players Table********************** */
     
-    //adding Name of player to (Players) TABLE
-    public void AddPlayer(String Pname) throws SQLException {
-            Statement stmt = con.createStatement();
-            String queryString = new String("insert into Players (Pname) values('" + Pname + "')");
-            int rs = stmt.executeUpdate(queryString);
-            stmt.close();
-            con.close();
-    }
     
     //adding Name & Pass of Player to (Players) TABLE
     public  int Signup(String Pname, String psswd) throws SQLException {
