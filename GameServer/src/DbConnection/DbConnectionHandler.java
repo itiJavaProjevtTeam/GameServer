@@ -65,6 +65,7 @@ public class DbConnectionHandler {
                 ResultSet rs = stmt.executeQuery(queryString);
                 if (rs.next()) {
                     if (psswd.equalsIgnoreCase(rs.getString("password"))) {
+                        updateStatus(Pname);
                         System.out.println("OK Found");
                         stmt.close();
                         con.close();
@@ -180,7 +181,7 @@ public class DbConnectionHandler {
         try {
             ResultSet rs = null;
             Statement stmt = con.createStatement();
-            String queryString = new String("Select * FROM Players where status = online"); // players online
+            String queryString = new String("Select * FROM Players where status = true"); // players online
             rs = stmt.executeQuery(queryString);
             rs.beforeFirst();
             while(rs.next()) {
@@ -196,7 +197,7 @@ public class DbConnectionHandler {
         try {
             ResultSet rs = null;
             Statement stmt = con.createStatement();
-            String queryString = new String("Select * FROM Players where status = offline"); // players online
+            String queryString = new String("Select * FROM Players where status = false"); // players online
             rs = stmt.executeQuery(queryString);
             rs.beforeFirst();
             while(rs.next()) {
@@ -206,6 +207,19 @@ public class DbConnectionHandler {
             Logger.getLogger(DbConnectionHandler.class.getName()).log(Level.SEVERE, null, ex);
         }
         return offline;
+    }
+
+    private void updateStatus(String Pname){
+        try {
+            Statement stmt = con.createStatement();
+            String queryString = new String("UPDATE Players SET Status = true WHERE Pname='" + Pname + "'");
+            int rs = stmt.executeUpdate(queryString);
+            stmt.close();
+            con.close();
+        } catch (SQLException ex) {
+            Logger.getLogger(DbConnectionHandler.class.getName()).log(Level.SEVERE, null, ex);
+        }
+          
     }
 
 }
