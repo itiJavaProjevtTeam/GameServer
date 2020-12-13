@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.chart.PieChart?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Text?>
+
+
+<AnchorPane id="AnchorPane" prefHeight="400.0" prefWidth="600.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/11.0.1" fx:controller="gameserver.GameServerUIController">
+   <children>
+      <PieChart fx:id="gameChart" layoutY="201.0" prefHeight="199.0" prefWidth="179.0" title="Players existence chart" />
+      <RadioButton fx:id="serverPowerBtn" layoutX="4.0" layoutY="5.0" mnemonicParsing="false" text="Server ON" />
+      <ScrollPane fx:id="onlineList" layoutX="386.0" layoutY="26.0" prefHeight="373.0" prefWidth="214.0">
+        <content>
+          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="372.0" prefWidth="208.0" />
+        </content>
+      </ScrollPane>
+      <Text layoutX="386.0" layoutY="19.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Online Players" />
+   </children>
+</AnchorPane>
