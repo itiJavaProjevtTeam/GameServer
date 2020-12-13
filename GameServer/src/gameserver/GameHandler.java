@@ -56,8 +56,10 @@ import java.util.logging.Logger;
         for(GameHandler sh : clientsVector){
             
                 sh.ps.println(msg);
-        }
-    }
+        } 
     // when signed in online player +1
     // when signed out offLine Players + 1 , online -1
+        
+    }
+    
 }
