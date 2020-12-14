@@ -22,6 +22,8 @@ public class MainServer extends Thread {
     static Vector<GameHandler> SocketVector;
     ServerSocket myServerSocket;
     Socket s;
+    static int onlinePlayers = 0;
+    static int offlinePlayers = 0;
 
     public MainServer() {
         try {

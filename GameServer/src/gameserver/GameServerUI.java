@@ -37,7 +37,7 @@ public class GameServerUI extends AnchorPane {
         pieChartData = FXCollections.observableArrayList(
                 new PieChart.Data("Offline",10 ), // database connection should return these actual numbers 
                 //dbconnection.getOFFlinePlayers()
-                new PieChart.Data("Online",10 ) // dbconnection.getOnlinePlayers()
+                new PieChart.Data("Online",10) // dbconnection.getOnlinePlayers()
         );
 
         gameChart = new PieChart(pieChartData);
@@ -114,8 +114,8 @@ public class GameServerUI extends AnchorPane {
                 Platform.runLater(new Runnable() {
                     @Override
                     public void run() {
-                        pieChartData.set(0, new PieChart.Data("Online",10 )); //MainServer.onlinePlayers
-                        pieChartData.set(0, new PieChart.Data("Offline",10 )); // MainServer.offlinePlayers
+                        pieChartData.set(0, new PieChart.Data("Online",MainServer.onlinePlayers )); //
+                        pieChartData.set(0, new PieChart.Data("Offline",MainServer.offlinePlayers )); // 
                     }
                 });
             }
