@@ -5,6 +5,7 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.derby.jdbc.ClientDriver;
@@ -16,10 +17,13 @@ import org.apache.derby.jdbc.ClientDriver;
 public class DbConnectionHandler {
     private static DbConnectionHandler dbch;
     private Connection con;
+    public static Vector<String> playerList;
     
     public DbConnectionHandler() throws SQLException {
+        
         DriverManager.registerDriver(new ClientDriver());
         con = DriverManager.getConnection("jdbc:derby://localhost:1527/TicTacToeDb", "javaTeam", "javaTeam");
+        playerList = new Vector<>();
         }
 
     public static DbConnectionHandler CreateConnection() throws SQLException {
@@ -221,7 +225,34 @@ public class DbConnectionHandler {
         }
           
     }
+    
+    public String getOnlinePlayersList(){
+        String players = null;
+        try {
+            playerList.clear();
+            
+             ResultSet rs = null;
+            Statement stmt = con.createStatement();
+            String queryString = new String("Select Pname FROM Players where status = true"); // players online
+            rs = stmt.executeQuery(queryString);
+            rs.beforeFirst();
+            while(rs.next()){
+                playerList.add(rs.getString(1));
+            }
+            for (String player : playerList){
+                if (players == null)
+                    players = player;
+                else 
+                    players = players + ("#"+player);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(DbConnectionHandler.class.getName()).log(Level.SEVERE, null, ex);
+        }
 
+          return players;  
+        
+    }
+    
 }
 
     
