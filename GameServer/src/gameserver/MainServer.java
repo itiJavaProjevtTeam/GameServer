@@ -24,15 +24,31 @@ public class MainServer extends Thread {
     Socket s;
     static int onlinePlayers = 0;
     static int offlinePlayers = 0;
+    static MainServer mainServer;
+    private DbConnection.DbConnectionHandler dbconnection;
 
-    public MainServer() {
+
+    private MainServer() {
+        
         try {
             myServerSocket = new ServerSocket(5007);
             SocketVector = new Vector<GameHandler>();
+            dbconnection = DbConnection.DbConnectionHandler.CreateConnection();
+            onlinePlayers = dbconnection.getOnlinePlayers();
+            offlinePlayers = dbconnection.getOFFlinePlayers();
+            
         } catch (IOException ex) {
             Logger.getLogger(MainServer.class.getName()).log(Level.SEVERE, null, ex);
         }
 
+    }
+    public static MainServer getInstance(){
+        if (mainServer == null){
+             return mainServer = new MainServer();
+        } else {
+            return mainServer;
+        }
+        
     }
 
     void closeClients() {

@@ -44,15 +44,14 @@ public class GameHandler extends Thread {
     }
 
     public void run() {
-      // initializeDB(); // connection opened
+        initializeDB(); // connection opened
         while (true) {
 
             try {
                 String message = dis.readLine();
 //                sendMessageToAll(str);
-                if (message == null) ;
-                else if (parseMessage(message) == 1){
-                    if(!checkUserExistence(parsedMsg[0])){
+                if (message == null) ; else if (parseMessage(message) == 1) {
+                    if (!checkUserExistence(parsedMsg[0])) {
                         addUser(parsedMsg[0], parsedMsg[1]);
                         ++MainServer.offlinePlayers;
                         updatePlayeStatus(parsedMsg[0]);
@@ -61,18 +60,18 @@ public class GameHandler extends Thread {
                         System.out.println("User name is alreasdy in use");
                         ps.println("Cannot register player");
                     }
-                } else if (parseMessage(message) == 2){
-                    if(checkUserExistence(parsedMsg[0])){
+                } else if (parseMessage(message) == 2) {
+                    if (checkUserExistence(parsedMsg[0])) {
                         updatePlayeStatus(parsedMsg[0]);
                         ++MainServer.onlinePlayers;
+                        --MainServer.offlinePlayers;
                         ps.println("sign in Succeeded#" + getPlayerScore(parsedMsg[0]));
                     } else {
                         ps.println("Cannot sign in");
-                    }   
+                    }
                 } else if (parseMessage(message) == 5) {
                     ps.println(dbconnection.getOnlinePlayersList());
                 }
-
 
             } catch (IOException ex) {
                 stop();
@@ -101,7 +100,6 @@ public class GameHandler extends Thread {
     public void addUser(String playeName, String password) {
         dbconnection.Signup(playeName, password);
     }
-    
 
     public int parseMessage(String requestMessage) {
         if (requestMessage == null) {
@@ -137,14 +135,13 @@ public class GameHandler extends Thread {
         return dbconnection.GetScore(playerName);
 
     }
-    
-    public boolean checkUserExistence(String username){
-        if (dbconnection.checkUserExistence(username)){
-        return true;
+
+    public boolean checkUserExistence(String username) {
+        if (dbconnection.checkUserExistence(username)) {
+            return true;
         } else {
-        return false;
+            return false;
         }
     }
-    
 
 }

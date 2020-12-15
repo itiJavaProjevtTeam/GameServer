@@ -27,10 +27,7 @@ public class GameServer extends Application {
     
 public GameServer()
   {
-    
-            /* MainServer main = new MainServer ();
-             main.start();*/
-       
+
   }
     @Override
     public void start(Stage stage) throws Exception {

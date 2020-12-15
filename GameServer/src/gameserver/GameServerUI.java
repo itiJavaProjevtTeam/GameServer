@@ -33,11 +33,12 @@ public class GameServerUI extends AnchorPane {
         onlineList = new ScrollPane();
         anchorPane = new AnchorPane();
         text = new Text();
-        mainServer = new MainServer();
+        dbconnection = DbConnection.DbConnectionHandler.CreateConnection();
+        dbconnection.openConnection();
         pieChartData = FXCollections.observableArrayList(
-                new PieChart.Data("Offline",10 ), // database connection should return these actual numbers 
-                //dbconnection.getOFFlinePlayers()
-                new PieChart.Data("Online",10) // dbconnection.getOnlinePlayers()
+                new PieChart.Data("Offline", dbconnection.getOFFlinePlayers()), // database connection should return these actual numbers 
+                
+                new PieChart.Data("Online", dbconnection.getOnlinePlayers()) // 
         );
 
         gameChart = new PieChart(pieChartData);
@@ -87,9 +88,12 @@ public class GameServerUI extends AnchorPane {
                 if (serverPowerBtn.getText() == "Server OFF") {
                     gameChart.setVisible(true);
 //     while server is on
+                    
                     serverPowerBtn.setText("Server ON");
-                    if (isFirstOpen) {
+                    if (isFirstOpen) {                     
+                        mainServer = MainServer.getInstance();
                         mainServer.start();
+                        
                         isFirstOpen = false;
                     } else {
                         mainServer.resume();
@@ -114,8 +118,8 @@ public class GameServerUI extends AnchorPane {
                 Platform.runLater(new Runnable() {
                     @Override
                     public void run() {
-                        pieChartData.set(0, new PieChart.Data("Online",MainServer.onlinePlayers )); //
-                        pieChartData.set(0, new PieChart.Data("Offline",MainServer.offlinePlayers )); // 
+                        pieChartData.set(0, new PieChart.Data("Online", MainServer.onlinePlayers)); //
+                        pieChartData.set(0, new PieChart.Data("Offline", MainServer.offlinePlayers)); // 
                     }
                 });
             }

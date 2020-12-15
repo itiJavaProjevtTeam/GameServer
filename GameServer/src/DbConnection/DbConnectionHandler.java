@@ -2,6 +2,7 @@ package DbConnection;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -210,9 +211,9 @@ public class DbConnectionHandler {
         int online = 0;
         try {
             ResultSet rs = null;
-            Statement stmt = con.createStatement();
-            String queryString = new String("Select * FROM Players where status = true"); // players online
-            rs = stmt.executeQuery(queryString);
+            String queryString = new String("Select * FROM Players where status = true");
+            PreparedStatement stmt = con.prepareStatement(queryString,ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_UPDATABLE);
+            rs = stmt.executeQuery();
             rs.beforeFirst();
             while (rs.next()) {
                 ++online;
@@ -227,9 +228,9 @@ public class DbConnectionHandler {
         int offline = 0;
         try {
             ResultSet rs = null;
-            Statement stmt = con.createStatement();
-            String queryString = new String("Select * FROM Players where status = false"); // players online
-            rs = stmt.executeQuery(queryString);
+            String queryString = new String("Select * FROM Players where status = false");
+            PreparedStatement stmt = con.prepareStatement(queryString,ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_UPDATABLE);
+            rs = stmt.executeQuery();
             rs.beforeFirst();
             while (rs.next()) {
                 ++offline;
@@ -259,7 +260,7 @@ public class DbConnectionHandler {
             playerList.clear();
 
             ResultSet rs = null;
-            Statement stmt = con.createStatement();
+            Statement stmt = con.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_UPDATABLE);
             String queryString = new String("Select Pname FROM Players where status = true"); // players online
             rs = stmt.executeQuery(queryString);
             rs.beforeFirst();
