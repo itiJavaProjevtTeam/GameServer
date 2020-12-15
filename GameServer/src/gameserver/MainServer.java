@@ -27,7 +27,7 @@ public class MainServer extends Thread {
 
     public MainServer() {
         try {
-            myServerSocket = new ServerSocket(5011);
+            myServerSocket = new ServerSocket(5007);
             SocketVector = new Vector<GameHandler>();
         } catch (IOException ex) {
             Logger.getLogger(MainServer.class.getName()).log(Level.SEVERE, null, ex);

@@ -44,7 +44,7 @@ public class GameHandler extends Thread {
     }
 
     public void run() {
-        initializeDB(); // connection opened
+      // initializeDB(); // connection opened
         while (true) {
 
             try {
@@ -52,20 +52,20 @@ public class GameHandler extends Thread {
 //                sendMessageToAll(str);
                 if (message == null) ;
                 else if (parseMessage(message) == 1){
-                    if(!checkUserExistence(parsedMsg[1])){
-                        addUser(parsedMsg[1], parsedMsg[2]);
+                    if(!checkUserExistence(parsedMsg[0])){
+                        addUser(parsedMsg[0], parsedMsg[1]);
                         ++MainServer.offlinePlayers;
-                        updatePlayeStatus(parsedMsg[1]);
+                        updatePlayeStatus(parsedMsg[0]);
                         ps.println("register done");
                     } else {
                         System.out.println("User name is alreasdy in use");
                         ps.println("Cannot register player");
                     }
                 } else if (parseMessage(message) == 2){
-                    if(checkUserExistence(parsedMsg[1])){
-                        updatePlayeStatus(parsedMsg[1]);
+                    if(checkUserExistence(parsedMsg[0])){
+                        updatePlayeStatus(parsedMsg[0]);
                         ++MainServer.onlinePlayers;
-                        ps.println("sign in Succeeded#" + getPlayerScore(parsedMsg[1]));
+                        ps.println("sign in Succeeded#" + getPlayerScore(parsedMsg[0]));
                     } else {
                         ps.println("Cannot sign in");
                     }   
@@ -107,20 +107,20 @@ public class GameHandler extends Thread {
         if (requestMessage == null) {
             return -1;
         }
-        parsedMsg = requestMessage.split("\\#");
-        if (parsedMsg[0].equals("REG")) { // register
+        parsedMsg = requestMessage.split("_");
+        if (parsedMsg[2].equals("_UP")) { // register
             return 1;
         }
-        if (parsedMsg[0].equals("SIGN")) { // sign in
+        if (parsedMsg[2].equals("_IN")) { // sign in
             return 2;
         }
-        if (parsedMsg[0].equals("PLAY")) { // Playing
+        if (parsedMsg[2].equals("PLAY")) { // Playing
             return 3;
         }
-        if (parsedMsg[0].equals("FINISH")) { // finished playing
+        if (parsedMsg[2].equals("FINISH")) { // finished playing
             return 4;
         }
-        if (parsedMsg[0].equals("PLAYERLIST")) { // request PlayerList
+        if (parsedMsg[2].equals("PLAYERLIST")) { // request PlayerList
             return 5;
         } else {
             return 6; // signOut
