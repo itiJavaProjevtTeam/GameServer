@@ -69,6 +69,8 @@ public class GameHandler extends Thread {
                 } else if (parseMessage(message) == 2) {
                     if (checkUserExistence(parsedMsg[0])) {
                         updatePlayeStatus(parsedMsg[0]);
+                        signIn(parsedMsg[0], parsedMsg[1]);
+                         System.out.print("signed in");
                         ++MainServer.onlinePlayers;
                         --MainServer.offlinePlayers;
                         dataOutputStream.writeUTF("sign in Succeeded#" + getPlayerScore(parsedMsg[0]));
@@ -116,11 +118,11 @@ public class GameHandler extends Thread {
         if (requestMessage == null) {
             return -1;
         }
-        parsedMsg = requestMessage.split("_");
-        if (parsedMsg[2].equals("_UP")) { // register
+        parsedMsg = requestMessage.split("\\.");
+        if (parsedMsg[2].equals("UP")) { // register
             return 1;
         }
-        if (parsedMsg[2].equals("_IN")) { // sign in
+        if (parsedMsg[2].equals("IN")) { // sign in
             return 2;
         }
         if (parsedMsg[2].equals("PLAY")) { // Playing
@@ -138,13 +140,16 @@ public class GameHandler extends Thread {
     }
 
     public void updatePlayeStatus(String playeName) {
-        dbconnection.UpdateScore(playeName, MIN_PRIORITY);
+        dbconnection.updateStatus(playeName); // score needed
 
     }
 
     public long getPlayerScore(String playerName) {
         return dbconnection.GetScore(playerName);
 
+    }
+    public boolean signIn(String userName, String password){
+        return dbconnection.Signin(userName, password);
     }
 
     public boolean checkUserExistence(String username) {
