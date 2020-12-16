@@ -10,7 +10,9 @@ package gameserver;
  * @author abdelrahmanelnagdy
  */
 import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.PrintStream;
 import java.net.Socket;
 import java.sql.SQLException;
@@ -24,8 +26,8 @@ import java.util.logging.Logger;
  */
 public class GameHandler extends Thread {
 
-    DataInputStream dis;
-    PrintStream ps;
+    DataInputStream dataInputStream;
+    DataOutputStream dataOutputStream;
     String[] parsedMsg;
     private DbConnection.DbConnectionHandler dbconnection;
 
@@ -33,9 +35,10 @@ public class GameHandler extends Thread {
 
     public GameHandler(Socket cs) {
         try {
-            dbconnection = DbConnection.DbConnectionHandler.CreateConnection();
-            dis = new DataInputStream(cs.getInputStream());
-            ps = new PrintStream(cs.getOutputStream());
+               dbconnection = DbConnection.DbConnectionHandler.CreateConnection();
+                dataOutputStream = new DataOutputStream(cs.getOutputStream());
+                dataInputStream = new DataInputStream(cs.getInputStream());
+                
             clientsVector.add(this);
             start();
         } catch (IOException ex) {
@@ -48,30 +51,38 @@ public class GameHandler extends Thread {
         while (true) {
 
             try {
-                String message = dis.readLine();
+                String message = dataInputStream.readUTF();
+                System.out.println("The message sent from the socket was: " + message);
 //                sendMessageToAll(str);
-                if (message == null) ; else if (parseMessage(message) == 1) {
+                if (message == null) ; 
+                else if (parseMessage(message) == 1) {
                     if (!checkUserExistence(parsedMsg[0])) {
                         addUser(parsedMsg[0], parsedMsg[1]);
                         ++MainServer.offlinePlayers;
                         updatePlayeStatus(parsedMsg[0]);
-                        ps.println("register done");
+                        System.out.print("Registered");
+                        dataOutputStream.writeUTF("register done");
                     } else {
                         System.out.println("User name is alreasdy in use");
-                        ps.println("Cannot register player");
+                        dataOutputStream.writeUTF("Cannot register player");
                     }
                 } else if (parseMessage(message) == 2) {
                     if (checkUserExistence(parsedMsg[0])) {
                         updatePlayeStatus(parsedMsg[0]);
                         ++MainServer.onlinePlayers;
                         --MainServer.offlinePlayers;
-                        ps.println("sign in Succeeded#" + getPlayerScore(parsedMsg[0]));
+                        dataOutputStream.writeUTF("sign in Succeeded#" + getPlayerScore(parsedMsg[0]));
                     } else {
-                        ps.println("Cannot sign in");
+                        dataOutputStream.writeUTF("Cannot sign in");
                     }
                 } else if (parseMessage(message) == 5) {
-                    ps.println(dbconnection.getOnlinePlayersList());
+                    dataOutputStream.writeUTF(dbconnection.getOnlinePlayersList());
                 }
+                
+                /*
+                dataOutputStream.flush();    // send the message
+                dataOutputStream.close();  */  // close the stream
+                
 
             } catch (IOException ex) {
                 stop();
@@ -83,10 +94,10 @@ public class GameHandler extends Thread {
 
     }
 
-    public void sendMessageToAll(String msg) {
+    public void sendMessageToAll(String msg) throws IOException {
         for (GameHandler sh : clientsVector) {
 
-            sh.ps.println(msg);
+            sh.dataOutputStream.writeUTF(msg);
         }
         // when signed in online player +1
         // when signed out offLine Players + 1 , online -1
