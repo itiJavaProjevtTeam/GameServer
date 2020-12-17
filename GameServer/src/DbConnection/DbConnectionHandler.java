@@ -269,7 +269,7 @@ public class DbConnectionHandler {
         }
 
     }
-
+/*
     public String getOnlinePlayersList() {
         String players = null;
         try {
@@ -296,6 +296,21 @@ public class DbConnectionHandler {
 
         return players;
 
+    }
+*/
+    public ResultSet getOnlinePlayersList()
+    {
+        ResultSet rs  = null;
+        try {
+            String queryString = new String("Select Pname,Score FROM Players where status = true");
+            PreparedStatement stmt = con.prepareStatement(queryString,ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_READ_ONLY);
+            rs = stmt.executeQuery();
+        } catch (SQLException ex) {
+            Logger.getLogger(DbConnectionHandler.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return rs;
+    
     }
 
 }
