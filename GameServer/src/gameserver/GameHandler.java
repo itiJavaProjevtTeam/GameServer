@@ -35,10 +35,10 @@ public class GameHandler extends Thread {
 
     public GameHandler(Socket cs) {
         try {
-               dbconnection = DbConnection.DbConnectionHandler.CreateConnection();
-                dataOutputStream = new DataOutputStream(cs.getOutputStream());
-                dataInputStream = new DataInputStream(cs.getInputStream());
-                
+            dbconnection = DbConnection.DbConnectionHandler.CreateConnection();
+            dataOutputStream = new DataOutputStream(cs.getOutputStream());
+            dataInputStream = new DataInputStream(cs.getInputStream());
+
             clientsVector.add(this);
             start();
         } catch (IOException ex) {
@@ -54,8 +54,7 @@ public class GameHandler extends Thread {
                 String message = dataInputStream.readUTF();
                 System.out.println("The message sent from the socket was: " + message);
 //                sendMessageToAll(str);
-                if (message == null) ; 
-                else if (parseMessage(message) == 1) {
+                if (message == null) ; else if (parseMessage(message) == 1) {
                     if (!checkUserExistence(parsedMsg[0])) {
                         addUser(parsedMsg[0], parsedMsg[1]);
                         ++MainServer.offlinePlayers;
@@ -70,7 +69,7 @@ public class GameHandler extends Thread {
                     if (checkUserExistence(parsedMsg[0])) {
                         updatePlayeStatus(parsedMsg[0]);
                         signIn(parsedMsg[0], parsedMsg[1]);
-                         System.out.print("signed in");
+                        System.out.print("signed in");
                         ++MainServer.onlinePlayers;
                         --MainServer.offlinePlayers;
                         dataOutputStream.writeUTF("sign in Succeeded#" + getPlayerScore(parsedMsg[0]));
@@ -83,13 +82,22 @@ public class GameHandler extends Thread {
                     dataOutputStream.writeUTF(getOnLinePlayers());
                     System.out.print("playerList send successfully");
                     dataOutputStream.flush();
-                }
+
                 
+                } else if (parseMessage(message) == 6) {
+
+//                    dataOutputStream.writeUTF(dbconnection.GetScore(""));
+                }else if (parseMessage(message) == 7) {
+                    goOffline(parsedMsg[0]);
+                    dataOutputStream.writeUTF("Player went offline succefully");
+                    --MainServer.onlinePlayers;
+                    ++MainServer.offlinePlayers;
+ 
+                }
+
                 /*
                 dataOutputStream.flush();    // send the message
                 dataOutputStream.close();  */  // close the stream
-                
-
             } catch (IOException ex) {
                 stop();
                 Logger.getLogger(GameHandler.class.getName()).log(Level.SEVERE, null, ex);
@@ -137,8 +145,14 @@ public class GameHandler extends Thread {
         }
         if (parsedMsg[2].equals("PLAYERLIST")) { // request PlayerList
             return 5;
+        }
+        if (parsedMsg[2].equals("SCORELIST")) { // request SCORELIST
+            return 6;
+        }
+        if(parsedMsg[2].equals("LOGOUT"))  { // logout request
+            return 7;
         } else {
-            return 6; // signOut
+            return 100; // signOut
         }
 
     }
@@ -152,7 +166,8 @@ public class GameHandler extends Thread {
         return dbconnection.GetScore(playerName);
 
     }
-    public boolean signIn(String userName, String password){
+
+    public boolean signIn(String userName, String password) {
         return dbconnection.Signin(userName, password);
     }
 
@@ -170,5 +185,10 @@ public class GameHandler extends Thread {
       return onLinePlayer;
     }
    
+    
+    public void goOffline(String playeName) {
+        dbconnection.updateStatus(playeName); // score needed
+
+    }
 
 }

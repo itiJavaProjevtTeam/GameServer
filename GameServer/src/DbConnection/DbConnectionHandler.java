@@ -20,6 +20,7 @@ public class DbConnectionHandler {
     private static DbConnectionHandler dbch;
     private Connection con;
     public static Vector<String> playerList;
+    public static Vector<Long> scoreList;
 
     private DbConnectionHandler() throws SQLException {
 
@@ -125,19 +126,30 @@ public class DbConnectionHandler {
 
     // return Score of player  
     public long GetScore(String Pname) {
-        long Score = 0;
+        long scores = 0;
         try {
-            Statement stmt = con.createStatement();
-            String queryString = new String("Select Score FROM Players where Pname='" + Pname + "'");
-            ResultSet rs = stmt.executeQuery(queryString);
-            rs.next();
-            Score = rs.getLong(1);
+            scoreList.clear();
+            ResultSet rs = null;
+            String queryString = new String("Select Score FROM Players where status = true");
+            PreparedStatement stmt = con.prepareStatement(queryString,ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_READ_ONLY);
+            rs = stmt.executeQuery();         
+            rs.beforeFirst();
+            while (rs.next()) {
+                scoreList.add(rs.getLong(1));
+            }
+//            for (Long score : scoreList) {
+//                if (scores == null) {
+//                    scores = toString(score);
+//                } else {
+//                    scores =toString( scores + ("." + score));
+//                }
+//            }
             stmt.close();
 
         } catch (SQLException ex) {
             Logger.getLogger(DbConnectionHandler.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return Score;
+        return scores;
     }
 
     /* *****************************Handling Games Table********************** */
@@ -239,6 +251,17 @@ public class DbConnectionHandler {
         try {
             Statement stmt = con.createStatement();
             String queryString = new String("UPDATE Players SET Status = true WHERE Pname='" + Pname + "'");
+            int rs = stmt.executeUpdate(queryString);
+            stmt.close();
+        } catch (SQLException ex) {
+            Logger.getLogger(DbConnectionHandler.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+    }
+    public void goOffline(String Pname) {
+        try {
+            Statement stmt = con.createStatement();
+            String queryString = new String("UPDATE Players SET Status = false WHERE Pname='" + Pname + "'");
             int rs = stmt.executeUpdate(queryString);
             stmt.close();
         } catch (SQLException ex) {
