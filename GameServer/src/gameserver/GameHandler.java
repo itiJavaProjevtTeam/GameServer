@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.net.Socket;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Vector;
 import java.util.logging.Level;
@@ -29,6 +30,8 @@ public class GameHandler extends Thread {
     DataInputStream dataInputStream;
     DataOutputStream dataOutputStream;
     String[] parsedMsg;
+    String Pname;
+    String Score;
     private DbConnection.DbConnectionHandler dbconnection;
 
     static Vector<GameHandler> clientsVector = new Vector<GameHandler>();
@@ -78,8 +81,8 @@ public class GameHandler extends Thread {
                     }
                 } 
                 else if (parseMessage(message) == 5) {
-                     System.out.print("playerList"+getOnLinePlayers());
-                    dataOutputStream.writeUTF(getOnLinePlayers());
+                    System.out.print("Player + score"+Pname+Score);
+                    dataOutputStream.writeUTF(Pname+","+Score);
                     System.out.print("playerList send successfully");
                     dataOutputStream.flush();
 
@@ -144,6 +147,7 @@ public class GameHandler extends Thread {
             return 4;
         }
         if (parsedMsg[2].equals("PLAYERLIST")) { // request PlayerList
+            getOnLinePlayers();
             return 5;
         }
         if (parsedMsg[2].equals("SCORELIST")) { // request SCORELIST
@@ -178,11 +182,32 @@ public class GameHandler extends Thread {
             return false;
         }
     }
-    public String getOnLinePlayers()
+    public void getOnLinePlayers()
     {
      
-     String onLinePlayer=dbconnection.getOnlinePlayersList();
-      return onLinePlayer;
+      ResultSet s =dbconnection.getOnlinePlayersList();
+      Pname = null;
+      Score = null;
+      if(s == null)
+      {
+          System.out.println("no data in table");
+      
+      }
+      else
+      {
+          try {
+              while(s.next())
+              {
+                  Pname = Pname + "\\." +s.getString(1);
+                  Score = Score + "\\." +String.valueOf(s.getInt(2));
+                  
+              }
+          } catch (SQLException ex) {
+              Logger.getLogger(GameHandler.class.getName()).log(Level.SEVERE, null, ex);
+          }
+      
+      }
+      
     }
    
     
