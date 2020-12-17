@@ -1,4 +1,4 @@
-package DbConnection;
+ package DbConnection;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -87,7 +87,7 @@ public class DbConnectionHandler {
                 
                 PreparedStatement stmt = con.prepareStatement(queryString);
                 stmt.setString(1, Pname);
-                ResultSet rs = stmt.executeQuery(queryString);
+                ResultSet rs = stmt.executeQuery();
                 if (rs.next()) {
                     if (psswd.equalsIgnoreCase(rs.getString("password"))) {
                         updateStatus(Pname);
@@ -253,10 +253,10 @@ public class DbConnectionHandler {
             playerList.clear();
 
             ResultSet rs = null;
-            Statement stmt = con.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_UPDATABLE);
-            String queryString = new String("Select Pname FROM Players where status = true"); // players online
-            rs = stmt.executeQuery(queryString);
-            rs.beforeFirst();
+            String queryString = new String("Select * FROM Players where status = true");
+            PreparedStatement stmt = con.prepareStatement(queryString,ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_READ_ONLY);
+            rs = stmt.executeQuery();
+           // rs.beforeFirst();
             while (rs.next()) {
                 playerList.add(rs.getString(1));
             }
@@ -264,7 +264,7 @@ public class DbConnectionHandler {
                 if (players == null) {
                     players = player;
                 } else {
-                    players = players + ("#" + player);
+                    players = players + ("." + player);
                 }
             }
         } catch (SQLException ex) {

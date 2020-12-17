@@ -77,8 +77,12 @@ public class GameHandler extends Thread {
                     } else {
                         dataOutputStream.writeUTF("Cannot sign in");
                     }
-                } else if (parseMessage(message) == 5) {
-                    dataOutputStream.writeUTF(dbconnection.getOnlinePlayersList());
+                } 
+                else if (parseMessage(message) == 5) {
+                     System.out.print("playerList"+getOnLinePlayers());
+                    dataOutputStream.writeUTF(getOnLinePlayers());
+                    System.out.print("playerList send successfully");
+                    dataOutputStream.flush();
                 }
                 
                 /*
@@ -159,5 +163,12 @@ public class GameHandler extends Thread {
             return false;
         }
     }
+    public String getOnLinePlayers()
+    {
+     
+     String onLinePlayer=dbconnection.getOnlinePlayersList();
+      return onLinePlayer;
+    }
+   
 
 }

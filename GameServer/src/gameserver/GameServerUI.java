@@ -27,7 +27,7 @@ public class GameServerUI extends AnchorPane {
     private ScheduledExecutorService scheduledExecutorService;
     private boolean isFirstOpen = true;
 
-    public GameServerUI() {
+    public GameServerUI() { 
 
         serverPowerBtn = new RadioButton();
         onlineList = new ScrollPane();
