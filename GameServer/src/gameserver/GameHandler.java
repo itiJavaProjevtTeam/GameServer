@@ -110,9 +110,11 @@ public class GameHandler extends Thread {
                         dataOutputStream.writeUTF("NO ENTRY");
                     }
 
+
                 } else if (parseMessage(message) == 5) {
                     System.out.print("Player + score " + Pname + Score);
                     dataOutputStream.writeUTF(Pname + Score);
+
                     System.out.print("playerList send successfully");
                     dataOutputStream.flush();
 
@@ -226,6 +228,35 @@ public class GameHandler extends Thread {
             return false;
         }
     }
+
+    public void getOnLinePlayers()
+    {
+     Pname="";
+     Score="";
+      ResultSet s =dbconnection.getOnlinePlayersList();
+     
+      if(s == null)
+      {
+          System.out.println("no data in table");
+      
+      }
+      else
+      {
+          try {
+              while(s.next())
+              {
+                  Pname +=s.getString(1)+".";
+                  Score +=String.valueOf(s.getInt(2))+".";
+                  
+              }
+          } catch (SQLException ex) {
+              Logger.getLogger(GameHandler.class.getName()).log(Level.SEVERE, null, ex);
+          }
+      
+      }
+    }
+      
+
     
     public boolean checkValidPassword(String username,String Password) {
         if (dbconnection.checkValidPassword(username,Password)) {
@@ -233,6 +264,7 @@ public class GameHandler extends Thread {
         } else {
             return false;
         }
+
     }
     
 
@@ -290,3 +322,4 @@ public class GameHandler extends Thread {
     }
 
 }
+
