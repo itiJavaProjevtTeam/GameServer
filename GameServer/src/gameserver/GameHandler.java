@@ -32,6 +32,9 @@ public class GameHandler extends Thread {
     String[] parsedMsg;
     String Pname;
     String Score;
+    boolean checkUserExistence;
+    boolean checkValidPassword;
+
     private DbConnection.DbConnectionHandler dbconnection;
 
     static Vector<GameHandler> clientsVector = new Vector<GameHandler>();
@@ -58,44 +61,63 @@ public class GameHandler extends Thread {
                 System.out.println("The message sent from the socket was: " + message);
 //                sendMessageToAll(str);
                 if (message == null) ; else if (parseMessage(message) == 1) {
-                    if (!checkUserExistence(parsedMsg[0])) {
-                        addUser(parsedMsg[0], parsedMsg[1]);
-                        ++MainServer.offlinePlayers;
-                        updatePlayeStatus(parsedMsg[0]);
-                        System.out.print("Registered");
-                        dataOutputStream.writeUTF("register done");
+                    //sign up
+                    if (!parsedMsg[0].isEmpty() && !parsedMsg[1].isEmpty()) {
+                        checkUserExistence = checkUserExistence(parsedMsg[0]);
+                        if (checkUserExistence == true) {
+                            dataOutputStream.writeUTF("ALREADY EXISTS");
+
+                        } else {
+                            addUser(parsedMsg[0], parsedMsg[1]);
+                            ++MainServer.offlinePlayers;
+                            updatePlayeStatus(parsedMsg[0]);
+                            System.out.print("Registered");
+                            dataOutputStream.writeUTF("register done");
+                        }
+
                     } else {
-                        System.out.println("User name is alreasdy in use");
-                        dataOutputStream.writeUTF("Cannot register player");
+                        dataOutputStream.writeUTF("NO ENTRY");
                     }
+                    
+                    
+                 //sign in
                 } else if (parseMessage(message) == 2) {
-                    if (checkUserExistence(parsedMsg[0])) {
-                        updatePlayeStatus(parsedMsg[0]);
-                        signIn(parsedMsg[0], parsedMsg[1]);
-                        System.out.print("signed in");
-                        ++MainServer.onlinePlayers;
-                        --MainServer.offlinePlayers;
-                        dataOutputStream.writeUTF("sign in Succeeded#" + getPlayerScore(parsedMsg[0]));
+                    if (!parsedMsg[0].isEmpty() && !parsedMsg[1].isEmpty()) {
+                        checkUserExistence = checkUserExistence(parsedMsg[0]);
+                        checkValidPassword = checkValidPassword(parsedMsg[0],parsedMsg[1]);
+                        if (checkUserExistence == true && checkValidPassword == true ) {
+                            updatePlayeStatus(parsedMsg[0]);
+                            ++MainServer.onlinePlayers;
+                            --MainServer.offlinePlayers;
+                            dataOutputStream.writeUTF("sign in Succeeded#" + getPlayerScore(parsedMsg[0]));
+                        } else if(checkValidPassword == false) {
+                            dataOutputStream.writeUTF("NOT Valid Pass");
+                        }
+                        else
+                        {
+                            dataOutputStream.writeUTF("NOT FOUND");
+                        }
                     } else {
-                        dataOutputStream.writeUTF("Cannot sign in");
+                        dataOutputStream.writeUTF("NO ENTRY");
                     }
-                } 
-                else if (parseMessage(message) == 5) {
-                    System.out.print("Player + score"+Pname+Score);
-                    dataOutputStream.writeUTF(Pname+Score);
+
+
+                } else if (parseMessage(message) == 5) {
+                    System.out.print("Player + score " + Pname + Score);
+                    dataOutputStream.writeUTF(Pname + Score);
+
                     System.out.print("playerList send successfully");
                     dataOutputStream.flush();
 
-                
                 } else if (parseMessage(message) == 6) {
 
 //                    dataOutputStream.writeUTF(dbconnection.GetScore(""));
-                }else if (parseMessage(message) == 7) {
+                } else if (parseMessage(message) == 7) {
                     goOffline(parsedMsg[0]);
                     dataOutputStream.writeUTF("Player went offline succefully");
                     --MainServer.onlinePlayers;
                     ++MainServer.offlinePlayers;
- 
+
                 }
 
                 /*
@@ -153,7 +175,7 @@ public class GameHandler extends Thread {
         if (parsedMsg[2].equals("SCORELIST")) { // request SCORELIST
             return 6;
         }
-        if(parsedMsg[2].equals("LOGOUT"))  { // logout request
+        if (parsedMsg[2].equals("LOGOUT")) { // logout request
             return 7;
         } else {
             return 100; // signOut
@@ -170,10 +192,11 @@ public class GameHandler extends Thread {
         return dbconnection.GetScore(playerName);
 
     }
-
+/*
     public boolean signIn(String userName, String password) {
         return dbconnection.Signin(userName, password);
     }
+*/
 
     public boolean checkUserExistence(String username) {
         if (dbconnection.checkUserExistence(username)) {
@@ -182,6 +205,7 @@ public class GameHandler extends Thread {
             return false;
         }
     }
+
     public void getOnLinePlayers()
     {
      Pname="";
@@ -208,9 +232,41 @@ public class GameHandler extends Thread {
       
       }
       
-    }
-   
+
     
+    public boolean checkValidPassword(String username,String Password) {
+        if (dbconnection.checkValidPassword(username,Password)) {
+            return true;
+        } else {
+            return false;
+        }
+
+    }
+    
+
+    public void getOnLinePlayers() {
+
+        ResultSet s = dbconnection.getOnlinePlayersList();
+        Pname = "";
+        Score = "";
+        if (s == null) {
+            System.out.println("no data in table");
+
+        } else {
+            try {
+                while (s.next()) {
+                    Pname += s.getString(1) + ".";
+                    Score += String.valueOf(s.getInt(2)) + ".";
+
+                }
+            } catch (SQLException ex) {
+                Logger.getLogger(GameHandler.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
+        }
+
+    }
+
     public void goOffline(String playeName) {
         dbconnection.updateStatus(playeName); // score needed
 

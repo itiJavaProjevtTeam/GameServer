@@ -20,7 +20,6 @@ public class DbConnectionHandler {
     private static DbConnectionHandler dbch;
     private Connection con;
     public static Vector<String> playerList;
-    public static Vector<Long> scoreList;
 
     private DbConnectionHandler() throws SQLException {
 
@@ -64,21 +63,55 @@ public class DbConnectionHandler {
     }
 
     public boolean checkUserExistence(String Pname) {
+        
         try {
             Statement stmt = con.createStatement();
             String queryString = new String("Select * FROM Players WHERE Pname='" + Pname + "'");
             ResultSet rs = stmt.executeQuery(queryString);
-            if (!rs.next()) {
-                System.out.println("This Username is already in use!");
+            if (rs.next()) {
+                System.out.println("User Exist");
+                stmt.close();
+                return true;
+            }
+            else
+            {
                 stmt.close();
                 return false;
-            } 
+
+            }      
         } catch (SQLException ex) {
             Logger.getLogger(DbConnectionHandler.class.getName()).log(Level.SEVERE, null, ex);
-           
-        }
-         return true;
+            return false;        }
     }
+    
+    public boolean checkValidPassword(String Pname,String Password) {
+        if (Pname != "" && Password != "") {
+            try {
+                String queryString = new String("Select * FROM Players WHERE Pname=?");
+                
+                PreparedStatement stmt = con.prepareStatement(queryString);
+                stmt.setString(1, Pname);
+                ResultSet rs = stmt.executeQuery();
+                if (rs.next()) {
+                    if (Password.equalsIgnoreCase(rs.getString("password"))) {
+                        System.out.println("Valid Password");
+                        stmt.close();
+                        return true;
+                    }
+                } else {
+                    System.out.println("NOT Valid Password");
+                    stmt.close();
+                    return false;
+                }
+            } catch (SQLException ex) {
+                Logger.getLogger(DbConnectionHandler.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        return false;
+    }
+    
+    
+    
 
     //check if Pname&Pass exist in db
     public boolean Signin(String Pname, String psswd)  {
@@ -110,7 +143,6 @@ public class DbConnectionHandler {
         return false;
     }
 
-    // update value of score in (Players) TABLE
     public void UpdateScore(String Pname, int Score) {
 
         try {
@@ -128,14 +160,13 @@ public class DbConnectionHandler {
     public long GetScore(String Pname) {
         long scores = 0;
         try {
-            scoreList.clear();
             ResultSet rs = null;
             String queryString = new String("Select Score FROM Players where status = true");
             PreparedStatement stmt = con.prepareStatement(queryString,ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_READ_ONLY);
             rs = stmt.executeQuery();         
             rs.beforeFirst();
             while (rs.next()) {
-                scoreList.add(rs.getLong(1));
+                rs.getLong(1);
             }
 //            for (Long score : scoreList) {
 //                if (scores == null) {
