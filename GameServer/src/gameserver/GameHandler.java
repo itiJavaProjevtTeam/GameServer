@@ -32,6 +32,11 @@ public class GameHandler extends Thread {
     String[] parsedMsg;
     String Pname;
     String Score;
+    String GID;
+    String P1;
+    String P2;
+    String Winner;
+
     boolean checkUserExistence;
     boolean checkValidPassword;
 
@@ -93,6 +98,10 @@ public class GameHandler extends Thread {
                         } else if(checkValidPassword == false) {
                             dataOutputStream.writeUTF("NOT Valid Pass");
                         }
+                        else if(checkUserExistence == false)
+                        {
+                           dataOutputStream.writeUTF("NOT Valid Name");
+                        }                       
                         else
                         {
                             dataOutputStream.writeUTF("NOT FOUND");
@@ -116,6 +125,14 @@ public class GameHandler extends Thread {
                     --MainServer.onlinePlayers;
                     ++MainServer.offlinePlayers;
 
+                }
+                else if(parseMessage(message) == 8)
+                {
+                    System.out.print("GID+P1+P2+Winner " + GID+P1+P2+Winner);
+                    dataOutputStream.writeUTF(GID+P1+P2+Winner);
+                    System.out.print("History send successfully");
+                    dataOutputStream.flush();
+                
                 }
 
                 /*
@@ -175,7 +192,13 @@ public class GameHandler extends Thread {
         }
         if (parsedMsg[2].equals("LOGOUT")) { // logout request
             return 7;
-        } else {
+        } 
+        if(parsedMsg[2].equals("History"))
+        {
+            getPlayedGames();
+            return 8;
+        }
+        else {
             return 100; // signOut
         }
 
@@ -232,6 +255,31 @@ public class GameHandler extends Thread {
                 Logger.getLogger(GameHandler.class.getName()).log(Level.SEVERE, null, ex);
             }
 
+        }
+
+    }
+    
+     public void getPlayedGames() {
+
+        try {
+            ResultSet s = dbconnection.GetPlayedGames();
+            GID = "";
+            P1 = "";
+            P2 = "";
+            Winner = "";
+            if (s == null) {
+                System.out.println("no data in table");  
+            } else {
+                
+                    while (s.next()) {
+                        GID += String.valueOf(s.getInt(1)) + ".";
+                        P1 += s.getString(2) + ".";
+                        P2 += s.getString(3) + ".";
+                        Winner += s.getString(4) + ".";  
+                    }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(GameHandler.class.getName()).log(Level.SEVERE, null, ex);
         }
 
     }
