@@ -82,7 +82,7 @@ public class GameHandler extends Thread {
                 } 
                 else if (parseMessage(message) == 5) {
                     System.out.print("Player + score"+Pname+Score);
-                    dataOutputStream.writeUTF(Pname+","+Score);
+                    dataOutputStream.writeUTF(Pname+Score);
                     System.out.print("playerList send successfully");
                     dataOutputStream.flush();
 
@@ -184,10 +184,10 @@ public class GameHandler extends Thread {
     }
     public void getOnLinePlayers()
     {
-     
+     Pname="";
+     Score="";
       ResultSet s =dbconnection.getOnlinePlayersList();
-      Pname = null;
-      Score = null;
+     
       if(s == null)
       {
           System.out.println("no data in table");
@@ -198,8 +198,8 @@ public class GameHandler extends Thread {
           try {
               while(s.next())
               {
-                  Pname = Pname + "\\." +s.getString(1);
-                  Score = Score + "\\." +String.valueOf(s.getInt(2));
+                  Pname +=s.getString(1)+".";
+                  Score +=String.valueOf(s.getInt(2))+".";
                   
               }
           } catch (SQLException ex) {
