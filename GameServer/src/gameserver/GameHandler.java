@@ -231,6 +231,7 @@ public class GameHandler extends Thread {
           }
       
       }
+    }
       
 
     
@@ -244,28 +245,7 @@ public class GameHandler extends Thread {
     }
     
 
-    public void getOnLinePlayers() {
-
-        ResultSet s = dbconnection.getOnlinePlayersList();
-        Pname = "";
-        Score = "";
-        if (s == null) {
-            System.out.println("no data in table");
-
-        } else {
-            try {
-                while (s.next()) {
-                    Pname += s.getString(1) + ".";
-                    Score += String.valueOf(s.getInt(2)) + ".";
-
-                }
-            } catch (SQLException ex) {
-                Logger.getLogger(GameHandler.class.getName()).log(Level.SEVERE, null, ex);
-            }
-
-        }
-
-    }
+ 
 
     public void goOffline(String playeName) {
         dbconnection.updateStatus(playeName); // score needed
@@ -273,3 +253,4 @@ public class GameHandler extends Thread {
     }
 
 }
+
