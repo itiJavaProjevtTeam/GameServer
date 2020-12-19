@@ -38,7 +38,9 @@ public class GameHandler extends Thread {
     String P1Score;
     String P2Score;
     String Winner;
-
+    String Moves;
+    String Positions;
+    String MovesPlayerName;
     boolean checkUserExistence;
     boolean checkValidPassword;
 
@@ -85,33 +87,27 @@ public class GameHandler extends Thread {
                     } else {
                         dataOutputStream.writeUTF("NO ENTRY");
                     }
-                    
-                    
-                 //sign in
+
+                    //sign in
                 } else if (parseMessage(message) == 2) {
                     if (!parsedMsg[1].isEmpty() && !parsedMsg[2].isEmpty()) {
                         checkUserExistence = checkUserExistence(parsedMsg[1]);
-                        checkValidPassword = checkValidPassword(parsedMsg[1],parsedMsg[2]);
-                        if (checkUserExistence == true && checkValidPassword == true ) {
+                        checkValidPassword = checkValidPassword(parsedMsg[1], parsedMsg[2]);
+                        if (checkUserExistence == true && checkValidPassword == true) {
                             updatePlayeStatus(parsedMsg[1]);
                             ++MainServer.onlinePlayers;
                             --MainServer.offlinePlayers;
                             dataOutputStream.writeUTF("sign in Succeeded#" + getPlayerScore(parsedMsg[1]));
-                        } else if(checkValidPassword == false) {
+                        } else if (checkValidPassword == false) {
                             dataOutputStream.writeUTF("NOT Valid Pass");
-                        }
-                        else if(checkUserExistence == false)
-                        {
-                           dataOutputStream.writeUTF("NOT Valid Name");
-                        }                       
-                        else
-                        {
+                        } else if (checkUserExistence == false) {
+                            dataOutputStream.writeUTF("NOT Valid Name");
+                        } else {
                             dataOutputStream.writeUTF("NOT FOUND");
                         }
                     } else {
                         dataOutputStream.writeUTF("NO ENTRY");
                     }
-
 
                 } else if (parseMessage(message) == 5) {
                     System.out.print("Player + score " + Pname + Score);
@@ -129,21 +125,23 @@ public class GameHandler extends Thread {
                     --MainServer.onlinePlayers;
                     ++MainServer.offlinePlayers;
 
-                }
-                else if(parseMessage(message) == 8)
-                {
-                    System.out.print("GID+P1+P2+Winner " + GID+P1+P1Score+P2+P2Score+Winner);
-                    dataOutputStream.writeUTF(GID+"_"+P1+"_"+P1Score+"_"+P2+"_"+P2Score+"_"+Winner);
+                } else if (parseMessage(message) == 8) {
+                    System.out.print("GID+P1+P2+Winner " + GID + P1 + P1Score + P2 + P2Score + Winner);
+                    dataOutputStream.writeUTF(GID + "_" + P1 + "_" + P1Score + "_" + P2 + "_" + P2Score + "_" + Winner);
                     System.out.print("History send successfully");
                     dataOutputStream.flush();
-                
-                }
-                else if(parseMessage(message) == 9)
-                {
+
+                } else if (parseMessage(message) == 9) {
                     System.out.println(message);
                     sendMessageToAll(message);
                 }
-
+                 else if (parseMessage(message) == 10) {
+                     getRecordedGames(Integer.parseInt(parsedMsg[1]));
+                    System.out.print("Positions + Moves + PlayersName " + Positions + Moves + MovesPlayerName);
+                    dataOutputStream.writeUTF(Positions + "_" + Moves + "_" + MovesPlayerName);
+                    System.out.print("Moves send successfully");
+                    dataOutputStream.flush();
+                        }
                 /*
                 dataOutputStream.flush();    // send the message
                 dataOutputStream.close();  */  // close the stream
@@ -201,17 +199,17 @@ public class GameHandler extends Thread {
         }
         if (parsedMsg[0].equals("LOGOUT")) { // logout request
             return 7;
-        } 
-        if(parsedMsg[0].equals("History"))
-        {
+        }
+        if (parsedMsg[0].equals("History")) {
             getPlayedGames();
             return 8;
         }
-        if(parsedMsg[0].equals("DUWTP"))
-        {
+        if (parsedMsg[0].equals("DUWTP")) {
             return 9;
         }
-        else {
+        if (parsedMsg[0].equals("RecordedGames")) {
+            return 10;
+        } else {
             return 100; // signOut
         }
 
@@ -226,11 +224,12 @@ public class GameHandler extends Thread {
         return dbconnection.GetScore(playerName);
 
     }
-/*
+
+    /*
     public boolean signIn(String userName, String password) {
         return dbconnection.Signin(userName, password);
     }
-*/
+     */
 
     public boolean checkUserExistence(String username) {
         if (dbconnection.checkUserExistence(username)) {
@@ -238,17 +237,16 @@ public class GameHandler extends Thread {
         } else {
             return false;
         }
-    }    
+    }
 
-    public boolean checkValidPassword(String username,String Password) {
-        if (dbconnection.checkValidPassword(username,Password)) {
+    public boolean checkValidPassword(String username, String Password) {
+        if (dbconnection.checkValidPassword(username, Password)) {
             return true;
         } else {
             return false;
         }
 
     }
-    
 
     public void getOnLinePlayers() {
 
@@ -272,8 +270,8 @@ public class GameHandler extends Thread {
         }
 
     }
-    
-     public void getPlayedGames() {
+
+    public void getPlayedGames() {
 
         ResultSet s = dbconnection.GetPlayedGames();
         GID = "";
@@ -293,7 +291,7 @@ public class GameHandler extends Thread {
                     P1Score += String.valueOf(dbconnection.GetScoreToHistoryTable(s.getString(2))) + ".";
                     P2 += s.getString(3) + ".";
                     P2Score += String.valueOf(dbconnection.GetScoreToHistoryTable(s.getString(3))) + ".";
-                    Winner +=s.getString(4) + ".";
+                    Winner += s.getString(4) + ".";
 
                 }
             } catch (SQLException ex) {
@@ -309,5 +307,32 @@ public class GameHandler extends Thread {
 
     }
 
-}
+    private void getRecordedGames(int gid) {
+        try {
+            ResultSet s = dbconnection.GetMoves(gid);
+            Positions = "";
+            Moves = "";
+            MovesPlayerName = "";
+            if (s == null) {
+                System.out.println("no data in table");
 
+            } else {
+                try {
+                    while (s.next()) {
+                        Moves += String.valueOf(s.getInt(2)) + ".";
+                        Positions += String.valueOf(s.getInt(3)) + ".";
+                        MovesPlayerName += String.valueOf(s.getInt(4)) + ".";
+
+                    }
+                } catch (SQLException ex) {
+                    Logger.getLogger(GameHandler.class.getName()).log(Level.SEVERE, null, ex);
+                }
+
+            }
+
+        } catch (SQLException ex) {
+            Logger.getLogger(GameHandler.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+}
