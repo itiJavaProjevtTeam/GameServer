@@ -168,13 +168,6 @@ public class DbConnectionHandler {
             while (rs.next()) {
                 rs.getLong(1);
             }
-//            for (Long score : scoreList) {
-//                if (scores == null) {
-//                    scores = toString(score);
-//                } else {
-//                    scores =toString( scores + ("." + score));
-//                }
-//            }
             stmt.close();
 
         } catch (SQLException ex) {
@@ -182,6 +175,8 @@ public class DbConnectionHandler {
         }
         return scores;
     }
+    
+    
 
     /* *****************************Handling Games Table********************** */
     //add name of two players to (Games) TABLE
@@ -234,14 +229,35 @@ public class DbConnectionHandler {
         return rs;
     }
 
-    //Recorded Games (p1,p2,winner)
-    public ResultSet GetPlayedGames(String Pname) throws SQLException {
+    //Recorded Games (gid,p1,p2,winner)
+    public ResultSet GetPlayedGames() throws SQLException {
 
         ResultSet rs = null;
         Statement stmt = con.createStatement();
-        String queryString = new String("Select * FROM Games where player1 = '" + Pname + "'OR player2='" + Pname + "'");
+        String queryString = new String("Select * FROM Games ");
         rs = stmt.executeQuery(queryString);
         return rs;
+    }
+    
+    // return Score of All players  
+    public long GetScoreToHistoryTable(String Pname) {
+        
+        long scores = 0;
+        try {
+            ResultSet rs = null;
+            String queryString = new String("Select Score FROM Players where Pname ='" + Pname + "'");
+            PreparedStatement stmt = con.prepareStatement(queryString,ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_READ_ONLY);
+            rs = stmt.executeQuery();         
+            rs.beforeFirst();
+            while (rs.next()) {
+                rs.getLong(1);
+            }
+            stmt.close();
+
+        } catch (SQLException ex) {
+            Logger.getLogger(DbConnectionHandler.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return scores;
     }
 
     public int getOnlinePlayers() {
@@ -300,35 +316,7 @@ public class DbConnectionHandler {
         }
 
     }
-/*
-    public String getOnlinePlayersList() {
-        String players = null;
-        try {
-            playerList.clear();
 
-            ResultSet rs = null;
-            String queryString = new String("Select * FROM Players where status = true");
-            PreparedStatement stmt = con.prepareStatement(queryString,ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_READ_ONLY);
-            rs = stmt.executeQuery();
-           // rs.beforeFirst();
-            while (rs.next()) {
-                playerList.add(rs.getString(1));
-            }
-            for (String player : playerList) {
-                if (players == null) {
-                    players = player;
-                } else {
-                    players = players + ("." + player);
-                }
-            }
-        } catch (SQLException ex) {
-            Logger.getLogger(DbConnectionHandler.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-        return players;
-
-    }
-*/
     public ResultSet getOnlinePlayersList()
     {
         ResultSet rs  = null;
