@@ -6,6 +6,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.LinkedHashMap;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -221,7 +222,7 @@ public class DbConnectionHandler {
     }
 
     //Recorded Moves
-    public ResultSet GetMoves(long GID) throws SQLException {
+    public ResultSet GetMoves(int GID) throws SQLException {
         ResultSet rs = null;
         Statement stmt = con.createStatement();
         String queryString = new String("select * from Moves where GID=" + GID);
@@ -242,6 +243,8 @@ public class DbConnectionHandler {
         return rs;
 
     }
+    
+ 
     
     // return Score of All players  
     public long GetScoreToHistoryTable(String Pname) {
