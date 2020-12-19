@@ -207,7 +207,7 @@ public class GameHandler extends Thread {
             getPlayedGames();
             return 8;
         }
-        if(parsedMsg[0].equals("DUWTP"))
+        if(parsedMsg[0].equals("DUWTP") || parsedMsg[0].equals("PREQ"))
         {
             return 9;
         }
