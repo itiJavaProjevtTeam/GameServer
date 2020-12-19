@@ -132,8 +132,8 @@ public class GameHandler extends Thread {
                 }
                 else if(parseMessage(message) == 8)
                 {
-                    System.out.print("GID+P1+P2+Winner " + GID+P1+P2+Winner);
-                    dataOutputStream.writeUTF(GID+P1+P2+Winner);
+                    System.out.print("GID+P1+P2+Winner " + GID+P1+P1Score+P2+P2Score+Winner);
+                    dataOutputStream.writeUTF(GID+"_"+P1+"_"+P1Score+"_"+P2+"_"+P2Score+"_"+Winner);
                     System.out.print("History send successfully");
                     dataOutputStream.flush();
                 
@@ -266,7 +266,7 @@ public class GameHandler extends Thread {
     
      public void getPlayedGames() {
 
-        ResultSet s = dbconnection.getOnlinePlayersList();
+        ResultSet s = dbconnection.GetPlayedGames();
         GID = "";
         P1 = "";
         P2 = "";

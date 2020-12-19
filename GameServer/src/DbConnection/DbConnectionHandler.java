@@ -230,13 +230,17 @@ public class DbConnectionHandler {
     }
 
     //Recorded Games (gid,p1,p2,winner)
-    public ResultSet GetPlayedGames() throws SQLException {
-
-        ResultSet rs = null;
-        Statement stmt = con.createStatement();
-        String queryString = new String("Select * FROM Games ");
-        rs = stmt.executeQuery(queryString);
+    public ResultSet GetPlayedGames(){
+            ResultSet rs = null;
+        try {
+            Statement stmt = con.createStatement();
+            String queryString = new String("Select * FROM Games ");
+            rs = stmt.executeQuery(queryString);
+        } catch (SQLException ex) {
+            Logger.getLogger(DbConnectionHandler.class.getName()).log(Level.SEVERE, null, ex);
+        }
         return rs;
+
     }
     
     // return Score of All players  
