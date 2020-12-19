@@ -69,15 +69,15 @@ public class GameHandler extends Thread {
 //                sendMessageToAll(str);
                 if (message == null) ; else if (parseMessage(message) == 1) {
                     //sign up
-                    if (!parsedMsg[0].isEmpty() && !parsedMsg[1].isEmpty()) {
+                    if (!parsedMsg[1].isEmpty() && !parsedMsg[2].isEmpty()) {
                         checkUserExistence = checkUserExistence(parsedMsg[0]);
                         if (checkUserExistence == true) {
                             dataOutputStream.writeUTF("ALREADY EXISTS");
 
                         } else {
-                            addUser(parsedMsg[0], parsedMsg[1]);
+                            addUser(parsedMsg[1], parsedMsg[2]);
                             ++MainServer.offlinePlayers;
-                            updatePlayeStatus(parsedMsg[0]);
+                            updatePlayeStatus(parsedMsg[1]);
                             System.out.print("Registered");
                             dataOutputStream.writeUTF("register done");
                         }
@@ -89,14 +89,14 @@ public class GameHandler extends Thread {
                     
                  //sign in
                 } else if (parseMessage(message) == 2) {
-                    if (!parsedMsg[0].isEmpty() && !parsedMsg[1].isEmpty()) {
-                        checkUserExistence = checkUserExistence(parsedMsg[0]);
-                        checkValidPassword = checkValidPassword(parsedMsg[0],parsedMsg[1]);
+                    if (!parsedMsg[1].isEmpty() && !parsedMsg[2].isEmpty()) {
+                        checkUserExistence = checkUserExistence(parsedMsg[1]);
+                        checkValidPassword = checkValidPassword(parsedMsg[1],parsedMsg[2]);
                         if (checkUserExistence == true && checkValidPassword == true ) {
-                            updatePlayeStatus(parsedMsg[0]);
+                            updatePlayeStatus(parsedMsg[1]);
                             ++MainServer.onlinePlayers;
                             --MainServer.offlinePlayers;
-                            dataOutputStream.writeUTF("sign in Succeeded#" + getPlayerScore(parsedMsg[0]));
+                            dataOutputStream.writeUTF("sign in Succeeded#" + getPlayerScore(parsedMsg[1]));
                         } else if(checkValidPassword == false) {
                             dataOutputStream.writeUTF("NOT Valid Pass");
                         }
@@ -124,7 +124,7 @@ public class GameHandler extends Thread {
 
 //                    dataOutputStream.writeUTF(dbconnection.GetScore(""));
                 } else if (parseMessage(message) == 7) {
-                    goOffline(parsedMsg[0]);
+                    goOffline(parsedMsg[1]);
                     dataOutputStream.writeUTF("Player went offline succefully");
                     --MainServer.onlinePlayers;
                     ++MainServer.offlinePlayers;
@@ -180,36 +180,35 @@ public class GameHandler extends Thread {
             return -1;
         }
         parsedMsg = requestMessage.split("\\.");
-        if (parsedMsg[2].equals("UP")) { // register
+        if (parsedMsg[0].equals("UP")) { // register
             return 1;
         }
-        if (parsedMsg[2].equals("IN")) { // sign in
+        if (parsedMsg[0].equals("IN")) { // sign in
             return 2;
         }
-        if (parsedMsg[2].equals("PLAY")) { // Playing
+        if (parsedMsg[0].equals("PLAY")) { // Playing
             return 3;
         }
-        if (parsedMsg[2].equals("FINISH")) { // finished playing
+        if (parsedMsg[0].equals("FINISH")) { // finished playing
             return 4;
         }
-        if (parsedMsg[2].equals("PLAYERLIST")) { // request PlayerList
+        if (parsedMsg[0].equals("PLAYERLIST")) { // request PlayerList
             getOnLinePlayers();
             return 5;
         }
-        if (parsedMsg[2].equals("SCORELIST")) { // request SCORELIST
+        if (parsedMsg[0].equals("SCORELIST")) { // request SCORELIST
             return 6;
         }
-        if (parsedMsg[2].equals("LOGOUT")) { // logout request
+        if (parsedMsg[0].equals("LOGOUT")) { // logout request
             return 7;
         } 
-        if(parsedMsg[2].equals("History"))
+        if(parsedMsg[0].equals("History"))
         {
             getPlayedGames();
             return 8;
         }
-        if(parsedMsg[2].equals("DUWTP"))
+        if(parsedMsg[0].equals("DUWTP"))
         {
-            getPlayedGames();
             return 9;
         }
         else {
