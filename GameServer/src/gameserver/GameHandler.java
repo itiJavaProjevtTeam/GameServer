@@ -138,6 +138,11 @@ public class GameHandler extends Thread {
                     dataOutputStream.flush();
                 
                 }
+                else if(parseMessage(message) == 9)
+                {
+                    System.out.println(message);
+                    sendMessageToAll(message);
+                }
 
                 /*
                 dataOutputStream.flush();    // send the message
@@ -201,6 +206,11 @@ public class GameHandler extends Thread {
         {
             getPlayedGames();
             return 8;
+        }
+        if(parsedMsg[2].equals("DUWTP"))
+        {
+            getPlayedGames();
+            return 9;
         }
         else {
             return 100; // signOut
