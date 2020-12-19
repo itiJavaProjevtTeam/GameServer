@@ -35,6 +35,8 @@ public class GameHandler extends Thread {
     String GID;
     String P1;
     String P2;
+    String P1Score;
+    String P2Score;
     String Winner;
 
     boolean checkUserExistence;
@@ -227,37 +229,8 @@ public class GameHandler extends Thread {
         } else {
             return false;
         }
-    }
+    }    
 
-    public void getOnLinePlayers()
-    {
-     Pname="";
-     Score="";
-      ResultSet s =dbconnection.getOnlinePlayersList();
-     
-      if(s == null)
-      {
-          System.out.println("no data in table");
-      
-      }
-      else
-      {
-          try {
-              while(s.next())
-              {
-                  Pname +=s.getString(1)+".";
-                  Score +=String.valueOf(s.getInt(2))+".";
-                  
-              }
-          } catch (SQLException ex) {
-              Logger.getLogger(GameHandler.class.getName()).log(Level.SEVERE, null, ex);
-          }
-      
-      }
-    }
-      
-
-    
     public boolean checkValidPassword(String username,String Password) {
         if (dbconnection.checkValidPassword(username,Password)) {
             return true;
@@ -293,25 +266,31 @@ public class GameHandler extends Thread {
     
      public void getPlayedGames() {
 
-        try {
-            ResultSet s = dbconnection.GetPlayedGames();
-            GID = "";
-            P1 = "";
-            P2 = "";
-            Winner = "";
-            if (s == null) {
-                System.out.println("no data in table");  
-            } else {
-                
-                    while (s.next()) {
-                        GID += String.valueOf(s.getInt(1)) + ".";
-                        P1 += s.getString(2) + ".";
-                        P2 += s.getString(3) + ".";
-                        Winner += s.getString(4) + ".";  
-                    }
+        ResultSet s = dbconnection.getOnlinePlayersList();
+        GID = "";
+        P1 = "";
+        P2 = "";
+        Winner = "";
+        P1Score = "";
+        P2Score = "";
+        if (s == null) {
+            System.out.println("no data in table");
+
+        } else {
+            try {
+                while (s.next()) {
+                    GID += String.valueOf(s.getInt(1)) + ".";
+                    P1 += s.getString(2) + ".";
+                    P1Score += String.valueOf(dbconnection.GetScoreToHistoryTable(s.getString(2))) + ".";
+                    P2 += s.getString(3) + ".";
+                    P2Score += String.valueOf(dbconnection.GetScoreToHistoryTable(s.getString(3))) + ".";
+                    Winner +=s.getString(4) + ".";
+
+                }
+            } catch (SQLException ex) {
+                Logger.getLogger(GameHandler.class.getName()).log(Level.SEVERE, null, ex);
             }
-        } catch (SQLException ex) {
-            Logger.getLogger(GameHandler.class.getName()).log(Level.SEVERE, null, ex);
+
         }
 
     }
