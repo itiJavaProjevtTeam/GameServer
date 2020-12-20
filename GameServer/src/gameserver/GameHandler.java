@@ -205,13 +205,18 @@ public class GameHandler extends Thread {
             return 8;
         }
 
-        if(parsedMsg[0].equals("DUWTP") || parsedMsg[0].equals("PREQ"))
+        if(parsedMsg[0].equals("CanPlay"))
         {
             return 9;
         }
         if (parsedMsg[0].equals("RecordedGames")) {
             return 10;
-        } else {
+        }
+        if (parsedMsg[0].equals("Accept")) {
+            return 11;
+        }if (parsedMsg[0].equals("Reject")) {
+            return 12;
+        }else {
             return 100; // signOut
         }
 
