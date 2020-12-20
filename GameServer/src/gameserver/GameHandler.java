@@ -38,7 +38,7 @@ public class GameHandler extends Thread {
     String P1Score;
     String P2Score;
     String Winner;
-    String Moves;
+    String symbol;
     String Positions;
     String MovesPlayerName;
     boolean checkUserExistence;
@@ -136,9 +136,10 @@ public class GameHandler extends Thread {
                     sendMessageToAll(message);
                 }
                  else if (parseMessage(message) == 10) {
+                     System.out.print("Message is "+message);
                      getRecordedGames(Integer.parseInt(parsedMsg[1]));
-                    System.out.print("Positions + Moves + PlayersName " + Positions + Moves + MovesPlayerName);
-                    dataOutputStream.writeUTF(Positions + "_" + Moves + "_" + MovesPlayerName);
+                    System.out.print("Positions + Moves + PlayersName "+ symbol +  Positions + MovesPlayerName);
+                    dataOutputStream.writeUTF(symbol + "_" + Positions + "_" + MovesPlayerName);
                     System.out.print("Moves send successfully");
                     dataOutputStream.flush();
                         }
@@ -313,7 +314,7 @@ public class GameHandler extends Thread {
         try {
             ResultSet s = dbconnection.GetMoves(gid);
             Positions = "";
-            Moves = "";
+            symbol = "";
             MovesPlayerName = "";
             if (s == null) {
                 System.out.println("no data in table");
@@ -321,9 +322,9 @@ public class GameHandler extends Thread {
             } else {
                 try {
                     while (s.next()) {
-                        Moves += String.valueOf(s.getInt(2)) + ".";
+                        symbol += s.getString(5) + ".";
                         Positions += String.valueOf(s.getInt(3)) + ".";
-                        MovesPlayerName += String.valueOf(s.getInt(4)) + ".";
+                        MovesPlayerName += s.getString(4) + ".";
 
                     }
                 } catch (SQLException ex) {
