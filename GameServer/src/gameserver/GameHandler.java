@@ -143,6 +143,28 @@ public class GameHandler extends Thread {
                     System.out.print("Moves send successfully");
                     dataOutputStream.flush();
                         }
+                else if (parseMessage(message) == 11){
+                      System.out.print("Message is "+message);
+                      sendMessageToAll(message);
+                }
+                 else if (parseMessage(message) == 12){
+                      System.out.print("Message is "+message);
+                      sendMessageToAll(message);
+                }
+                 else if (parseMessage(message) == 13){
+                      System.out.print("Message is "+message);
+                      sendMessageToAll(message);
+                }
+                 //add step
+                 else if (parseMessage(message) == 14){
+                      System.out.print("Message is "+message);
+                      sendMessageToAll(message);
+                }
+                 else if (parseMessage(message) == 15){
+                      System.out.print("Message is "+message);
+                      sendMessageToAll(message);
+                }
+                
                 /*
                 dataOutputStream.flush();    // send the message
                 dataOutputStream.close();  */  // close the stream
@@ -210,6 +232,7 @@ public class GameHandler extends Thread {
         {
             return 9;
         }
+       
         if (parsedMsg[0].equals("RecordedGames")) {
             return 10;
         }
@@ -217,7 +240,27 @@ public class GameHandler extends Thread {
             return 11;
         }if (parsedMsg[0].equals("Reject")) {
             return 12;
-        }else {
+        }if(parsedMsg[0].equals("DUWTP"))
+        {
+            return 13;
+        }
+            if(parsedMsg[0].equals("play"))
+        {
+            return 14;
+        }
+              if(parsedMsg[0].equals("win"))
+        {
+            return 15;
+        }
+              if(parsedMsg[0].equals("loss"))
+        {
+            return 16;
+        }
+          if(parsedMsg[0].equals("tied"))
+        {
+            return 17;
+        }
+        else {
             return 100; // signOut
         }
 
