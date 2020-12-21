@@ -151,7 +151,7 @@ public class GameHandler extends Thread {
                       dbconnection.updatePlaying(parsedMsg[2]);
                       System.out.print("Message is "+message);
                       sendMessageToAll(message);
-                      while(true)
+                      while(!parsedMsg[0].equalsIgnoreCase("win") && !message.equalsIgnoreCase("tied") )
                       {
                        sendMessageToAll("canPlay."+parsedMsg[1]+"."+String.valueOf(flagTurnp1));
                        sendMessageToAll("canPlay."+parsedMsg[2]+"."+String.valueOf(flagTurnp2));
@@ -321,7 +321,7 @@ public class GameHandler extends Thread {
 
     public void getOnLinePlayers(String PlayerName) {
 
-        ResultSet s = dbconnection.getOnlinePlayersList(PlayerName);
+        ResultSet s = dbconnection.getOnlinePlayersList();
         Pname = "";
         Score = "";
         if (s == null) {
@@ -330,9 +330,12 @@ public class GameHandler extends Thread {
         } else {
             try {
                 while (s.next()) {
-                    
-                     Pname += s.getString(1) + ".";
+                    if(s.getString(1) != PlayerName)
+                    {
+                    Pname += s.getString(1) + ".";
                     Score += String.valueOf(s.getInt(2)) + ".";
+                    }
+                     
 
                 }
             } catch (SQLException ex) {

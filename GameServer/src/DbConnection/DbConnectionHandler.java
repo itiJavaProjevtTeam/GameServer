@@ -359,11 +359,11 @@ public class DbConnectionHandler {
 
     }
 
-    public ResultSet getOnlinePlayersList(String Pname)
+    public ResultSet getOnlinePlayersList()
     {
         ResultSet rs  = null;
         try {
-            String queryString = new String("Select Pname,Score FROM Players where status = true AND Pname != '" + Pname + "'");
+            String queryString = new String("Select Pname,Score FROM Players where status = true ");
             PreparedStatement stmt = con.prepareStatement(queryString,ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_READ_ONLY);
             rs = stmt.executeQuery();
         } catch (SQLException ex) {
