@@ -43,7 +43,8 @@ public class GameHandler extends Thread {
     String MovesPlayerName;
     boolean checkUserExistence;
     boolean checkValidPassword;
-
+    boolean flagTurnp1 = true;
+    boolean flagTurnp2 = false;
     private DbConnection.DbConnectionHandler dbconnection;
 
     static Vector<GameHandler> clientsVector = new Vector<GameHandler>();
@@ -110,8 +111,9 @@ public class GameHandler extends Thread {
                     }
 
                 } else if (parseMessage(message) == 5) {
+                    getOnLinePlayers(parsedMsg[1]);
                     System.out.print("Player + score " + Pname + Score);
-                    dataOutputStream.writeUTF(Pname + Score);
+                    dataOutputStream.writeUTF("PLAYERLIST."+parsedMsg[1]+"."+Pname + Score);
 
                     System.out.print("playerList send successfully");
                     dataOutputStream.flush();
@@ -144,16 +146,39 @@ public class GameHandler extends Thread {
                     dataOutputStream.flush();
                         }
                 else if (parseMessage(message) == 11){
+                    
+                     // dbconnection.updatePlaying(parsedMsg[1]);
+                     // dbconnection.updatePlaying(parsedMsg[2]);
                       System.out.print("Message is "+message);
                       sendMessageToAll(message);
-                }
+                      System.out.print("Message is sent ooooooooooo ");
+                      //while(!parsedMsg[0].equalsIgnoreCase("win") && !message.equalsIgnoreCase("tied") )
+                      //{
+                       sendMessageToAll("canPlay."+parsedMsg[1]+"."+String.valueOf(flagTurnp1));
+                       sendMessageToAll("canPlay."+parsedMsg[2]+"."+String.valueOf(flagTurnp2));
+                      // setTurn();
+
+                     // }
+                                      }
                  else if (parseMessage(message) == 12){
                       System.out.print("Message is "+message);
                       sendMessageToAll(message);
+                      System.out.print("Message is sent ooooooooooo ");
                 }
                  else if (parseMessage(message) == 13){
                       System.out.print("Message is "+message);
                       sendMessageToAll(message);
+                      System.out.print("Message is sent ooooooooooo ");
+                    /*  if(dbconnection.Playing(parsedMsg[1]))
+                      {
+                       dataOutputStream.writeUTF("Playing."  + parsedMsg[2] + "." + parsedMsg[1]);
+ 
+                      }
+                      else
+                      {
+                        sendMessageToAll(message);
+                         System.out.print("Message is sent to @@@@@@@@@@@@ ");
+                      }*/
                 }
                  //add step
                  else if (parseMessage(message) == 14){
@@ -214,7 +239,6 @@ public class GameHandler extends Thread {
             return 4;
         }
         if (parsedMsg[0].equals("PLAYERLIST")) { // request PlayerList
-            getOnLinePlayers();
             return 5;
         }
         if (parsedMsg[0].equals("SCORELIST")) { // request SCORELIST
@@ -299,7 +323,7 @@ public class GameHandler extends Thread {
 
     }
 
-    public void getOnLinePlayers() {
+    public void getOnLinePlayers(String PlayerName) {
 
         ResultSet s = dbconnection.getOnlinePlayersList();
         Pname = "";
@@ -310,8 +334,12 @@ public class GameHandler extends Thread {
         } else {
             try {
                 while (s.next()) {
+                    if(s.getString(1) != PlayerName)
+                    {
                     Pname += s.getString(1) + ".";
                     Score += String.valueOf(s.getInt(2)) + ".";
+                    }
+                     
 
                 }
             } catch (SQLException ex) {
@@ -384,6 +412,20 @@ public class GameHandler extends Thread {
         } catch (SQLException ex) {
             Logger.getLogger(GameHandler.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+    
+    public void setTurn()
+    {
+        
+        if(flagTurnp1 == true)
+            flagTurnp1 = false;
+        else
+            flagTurnp1 = true;
+        
+        if(flagTurnp2 == false)
+            flagTurnp2 = true;
+        else
+            flagTurnp2 = false;
     }
 
 }

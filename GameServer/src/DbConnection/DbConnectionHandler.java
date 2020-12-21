@@ -111,6 +111,41 @@ public class DbConnectionHandler {
         return false;
     }
     
+    public boolean Playing(String Pname) {
+        if (Pname != "" ) {
+            try {
+                String queryString = new String("Select * FROM Players WHERE Playing=True");
+                
+                PreparedStatement stmt = con.prepareStatement(queryString);
+                stmt.setString(1, Pname);
+                ResultSet rs = stmt.executeQuery();
+                if (rs.next()) {
+                    return true;
+                } else {
+                    System.out.println("Player is available to play");
+                    stmt.close();
+                    return false;
+                }
+            } catch (SQLException ex) {
+                Logger.getLogger(DbConnectionHandler.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        return false;
+    }
+    
+    public void updatePlaying(String Pname)
+    {
+    try {
+            Statement stmt = con.createStatement();
+            String queryString = new String("UPDATE Players SET Playing = true WHERE Pname='" + Pname + "'");
+            int rs = stmt.executeUpdate(queryString);
+            stmt.close();
+        } catch (SQLException ex) {
+            Logger.getLogger(DbConnectionHandler.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    
+    }
+    
     
     
 
@@ -328,7 +363,7 @@ public class DbConnectionHandler {
     {
         ResultSet rs  = null;
         try {
-            String queryString = new String("Select Pname,Score FROM Players where status = true");
+            String queryString = new String("Select Pname,Score FROM Players where status = true ");
             PreparedStatement stmt = con.prepareStatement(queryString,ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_READ_ONLY);
             rs = stmt.executeQuery();
         } catch (SQLException ex) {
