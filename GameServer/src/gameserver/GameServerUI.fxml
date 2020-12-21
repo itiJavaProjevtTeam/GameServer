@@ -1,21 +1,52 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.chart.PieChart?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.control.RadioButton?>
-<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.text.Text?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.text.Font?>
 
 
-<AnchorPane id="AnchorPane" prefHeight="400.0" prefWidth="600.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/11.0.1" fx:controller="gameserver.GameServerUIController">
-   <children>
-      <PieChart fx:id="gameChart" layoutY="201.0" prefHeight="199.0" prefWidth="179.0" title="Players existence chart" />
-      <RadioButton fx:id="serverPowerBtn" layoutX="4.0" layoutY="5.0" mnemonicParsing="false" text="Server ON" />
-      <ScrollPane fx:id="onlineList" layoutX="386.0" layoutY="26.0" prefHeight="373.0" prefWidth="214.0">
-        <content>
-          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="372.0" prefWidth="208.0" />
-        </content>
-      </ScrollPane>
-      <Text layoutX="386.0" layoutY="19.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Online Players" />
-   </children>
-</AnchorPane>
+<BorderPane prefHeight="400.0" prefWidth="700.0" style="-fx-background-color: #60408b;" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gameserver.GameServerUIController">
+   <right>
+      <AnchorPane id="AnchorPane" prefHeight="400.0" prefWidth="450.0" style="-fx-background-color: #ffffff;" BorderPane.alignment="CENTER">
+         <children>
+            <PieChart fx:id="gameChart" layoutX="88.0" layoutY="111.0" prefHeight="222.0" prefWidth="253.0" style="-fx-background-color: #F5EEF8;" />
+            <RadioButton fx:id="serverPowerBtn" layoutX="14.0" layoutY="13.0" mnemonicParsing="false" text="Server ON" textFill="#60408b">
+               <font>
+                  <Font name="System Bold" size="18.0" />
+               </font>
+            </RadioButton>
+            <Label layoutX="110.0" layoutY="72.0" text="Players existence chart" textFill="#60408b">
+               <font>
+                  <Font name="System Bold" size="20.0" />
+               </font>
+            </Label>
+         </children>
+      </AnchorPane>
+   </right>
+   <left>
+      <AnchorPane prefHeight="400.0" prefWidth="250.0" BorderPane.alignment="CENTER">
+         <children>
+            <ImageView fitHeight="81.0" fitWidth="80.0" layoutX="29.0" layoutY="28.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../images/logoLa.png" />
+               </image>
+            </ImageView>
+            <Label layoutX="53.0" layoutY="99.0" text="TicTacToe" textFill="WHITE">
+               <font>
+                  <Font name="System Bold" size="24.0" />
+               </font>
+            </Label>
+            <Label layoutX="37.0" layoutY="134.0" text="Game Server" textFill="WHITE">
+               <font>
+                  <Font name="System Bold" size="24.0" />
+               </font>
+            </Label>
+         </children>
+      </AnchorPane>
+   </left>
+</BorderPane>
