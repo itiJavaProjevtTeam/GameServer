@@ -147,26 +147,29 @@ public class GameHandler extends Thread {
                         }
                 else if (parseMessage(message) == 11){
                     
-                      dbconnection.updatePlaying(parsedMsg[1]);
-                      dbconnection.updatePlaying(parsedMsg[2]);
+                     // dbconnection.updatePlaying(parsedMsg[1]);
+                     // dbconnection.updatePlaying(parsedMsg[2]);
                       System.out.print("Message is "+message);
                       sendMessageToAll(message);
-                      while(!parsedMsg[0].equalsIgnoreCase("win") && !message.equalsIgnoreCase("tied") )
-                      {
+                      System.out.print("Message is sent ooooooooooo ");
+                      //while(!parsedMsg[0].equalsIgnoreCase("win") && !message.equalsIgnoreCase("tied") )
+                      //{
                        sendMessageToAll("canPlay."+parsedMsg[1]+"."+String.valueOf(flagTurnp1));
                        sendMessageToAll("canPlay."+parsedMsg[2]+"."+String.valueOf(flagTurnp2));
-                       setTurn();
+                      // setTurn();
 
-                      }
+                     // }
                                       }
                  else if (parseMessage(message) == 12){
                       System.out.print("Message is "+message);
                       sendMessageToAll(message);
+                      System.out.print("Message is sent ooooooooooo ");
                 }
                  else if (parseMessage(message) == 13){
                       System.out.print("Message is "+message);
                       sendMessageToAll(message);
-                      if(dbconnection.Playing(parsedMsg[1]))
+                      System.out.print("Message is sent ooooooooooo ");
+                    /*  if(dbconnection.Playing(parsedMsg[1]))
                       {
                        dataOutputStream.writeUTF("Playing."  + parsedMsg[2] + "." + parsedMsg[1]);
  
@@ -174,7 +177,8 @@ public class GameHandler extends Thread {
                       else
                       {
                         sendMessageToAll(message);
-                      }
+                         System.out.print("Message is sent to @@@@@@@@@@@@ ");
+                      }*/
                 }
                  //add step
                  else if (parseMessage(message) == 14){
