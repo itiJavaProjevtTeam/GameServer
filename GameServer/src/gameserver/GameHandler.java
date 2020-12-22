@@ -154,9 +154,10 @@ public class GameHandler extends Thread {
                       System.out.print("Message is sent ooooooooooo ");
                       //while(!parsedMsg[0].equalsIgnoreCase("win") && !message.equalsIgnoreCase("tied") )
                       //{
-                       sendMessageToAll("StartGame."+parsedMsg[1]+"."+parsedMsg[2]+"."+String.valueOf(flagTurnp1)+".10.X.O");
-                       sendMessageToAll("StartGame."+parsedMsg[2]+"."+parsedMsg[1]+"."+String.valueOf(flagTurnp2)+".15.O.X");
-                       setTurn();
+                      //String.valueOf(flagTurnp1)
+                       sendMessageToAll("StartGame."+parsedMsg[1]+"."+parsedMsg[2]+"."+"false"+".10.X.O");
+                       sendMessageToAll("StartGame."+parsedMsg[2]+"."+parsedMsg[1]+"."+"true"+".15.O.X");
+                      // setTurn();
                       // setTurn();
 
                      // }
