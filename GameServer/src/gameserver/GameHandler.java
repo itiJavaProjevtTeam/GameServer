@@ -164,62 +164,19 @@ public class GameHandler extends Thread {
                 } else if (parseMessage(message) == 15) {
                     System.out.print("Message is " + message);
                     sendMessageToAll("lose." + parsedMsg[1] + "." + parsedMsg[2]);
-                    
 
                 } else if (parseMessage(message) == 16) {
                     System.out.print("Message is " + message);
                     sendMessageToAll(message);
 
                 }
-
-                      System.out.print("Message is "+message);
-                      sendMessageToAll(message);
-                      System.out.print("Message is sent ooooooooooo ");
-        
-                                      }
-                 else if (parseMessage(message) == 12){
-                      System.out.print("Message is "+message);
-                      sendMessageToAll(message);
-                      System.out.print("Message is sent ooooooooooo ");
-                }
-                 else if (parseMessage(message) == 13){
-                      System.out.print("Message is "+message);
-                      sendMessageToAll(message);
-                      System.out.print("Message is sent ooooooooooo ");
-                    /*  if(dbconnection.Playing(parsedMsg[1]))
-                      {
-                       dataOutputStream.writeUTF("Playing."  + parsedMsg[2] + "." + parsedMsg[1]);
- 
-                      }
-                      else
-                      {
-                        sendMessageToAll(message);
-                         System.out.print("Message is sent to @@@@@@@@@@@@ ");
-                      }*/
-                }
-                 //add step
-                 else if (parseMessage(message) == 14){
-                      System.out.print("Message is "+message);
-                      sendMessageToAll(message);
-                }
-                 else if (parseMessage(message) == 15){
-                      System.out.print("Message is "+message);
-                       sendMessageToAll("lose."+parsedMsg[1]+"."+parsedMsg[2]);
-                      
-                }
-                  else if (parseMessage(message) == 16){
-                      System.out.print("Message is "+message);
-                       sendMessageToAll(message);
-                      
-                }
-                  else if (parseMessage(message) == 17){
+                 else if (parseMessage(message) == 17){
                        System.out.print("Message is "+message);
                        sendMessageToAll("StartGame."+parsedMsg[1]+"."+parsedMsg[2]+"."+"false"+".10.X.O");
                        sendMessageToAll("StartGame."+parsedMsg[2]+"."+parsedMsg[1]+"."+"true"+".15.O.X");
                        System.out.print("StartGame."+parsedMsg[1]+"."+parsedMsg[2]+"."+"false"+".10.X.O");
                       System.out.print("StartGame."+parsedMsg[2]+"."+parsedMsg[1]+"."+"true"+".15.O.X");
                 }
-                
 
             } catch (IOException ex) {
                 stop();
@@ -299,11 +256,10 @@ public class GameHandler extends Thread {
         if (parsedMsg[0].equals("tied")) {
             return 16;
         }
-               if(parsedMsg[0].equals("StartGame"))
+        if(parsedMsg[0].equals("StartGame"))
         {
             return 17;
-        }     
-        else {
+        }   else {
             return 100; // signOut
         }
 
@@ -446,9 +402,5 @@ public class GameHandler extends Thread {
 
     public boolean checkIsPlaying(String playerName) {
         return dbconnection.Playing(playerName);
-    }
-    
-    public void addGame(String playe1, String player2){
-        dbconnection.AddGame(playe1, player2);
     }
 }
