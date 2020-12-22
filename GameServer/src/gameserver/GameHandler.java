@@ -155,8 +155,7 @@ public class GameHandler extends Thread {
                       //while(!parsedMsg[0].equalsIgnoreCase("win") && !message.equalsIgnoreCase("tied") )
                       //{
                       //String.valueOf(flagTurnp1)
-                       sendMessageToAll("StartGame."+parsedMsg[1]+"."+parsedMsg[2]+"."+"false"+".10.X.O");
-                       sendMessageToAll("StartGame."+parsedMsg[2]+"."+parsedMsg[1]+"."+"true"+".15.O.X");
+                   
                       // setTurn();
                       // setTurn();
 
@@ -196,6 +195,13 @@ public class GameHandler extends Thread {
                       System.out.print("Message is "+message);
                        sendMessageToAll(message);
                       
+                }
+                  else if (parseMessage(message) == 17){
+                       System.out.print("Message is "+message);
+                       sendMessageToAll("StartGame."+parsedMsg[1]+"."+parsedMsg[2]+"."+"false"+".10.X.O");
+                       sendMessageToAll("StartGame."+parsedMsg[2]+"."+parsedMsg[1]+"."+"true"+".15.O.X");
+                       System.out.print("StartGame."+parsedMsg[1]+"."+parsedMsg[2]+"."+"false"+".10.X.O");
+                      System.out.print("StartGame."+parsedMsg[2]+"."+parsedMsg[1]+"."+"true"+".15.O.X");
                 }
                 
                 /*
@@ -284,6 +290,10 @@ public class GameHandler extends Thread {
         {
             return 16;
         }
+               if(parsedMsg[0].equals("StartGame"))
+        {
+            return 17;
+        }     
         else {
             return 100; // signOut
         }
