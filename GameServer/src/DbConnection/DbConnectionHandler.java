@@ -355,10 +355,11 @@ public class DbConnectionHandler {
 
     public void updateStatus(String Pname) {
         try {
-            Statement stmt = con.createStatement();
-            String queryString = new String("UPDATE Players SET Status = true WHERE Pname='" + Pname + "'");
-            int rs = stmt.executeUpdate(queryString);
-            stmt.close();
+               String queryString = new String("UPDATE Players SET Status = true WHERE Pname=?");
+               PreparedStatement stmt = con.prepareStatement(queryString,ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_READ_ONLY);
+               stmt.setString(1, Pname);
+               stmt.executeUpdate();
+                stmt.close();
         } catch (SQLException ex) {
             Logger.getLogger(DbConnectionHandler.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -366,6 +367,7 @@ public class DbConnectionHandler {
     }
     public void goOffline(String Pname) {
         try {
+            
             Statement stmt = con.createStatement();
             String queryString = new String("UPDATE Players SET Status = false WHERE Pname='" + Pname + "'");
             int rs = stmt.executeUpdate(queryString);
