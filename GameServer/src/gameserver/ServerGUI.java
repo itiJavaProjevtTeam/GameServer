@@ -1,5 +1,15 @@
 package gameserver;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+import javafx.application.Platform;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.scene.chart.PieChart;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
@@ -9,7 +19,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.text.Font;
 
-public abstract class ServerGUI extends BorderPane {
+public class ServerGUI extends BorderPane {
 
     protected final AnchorPane anchorPane;
     protected final PieChart gameChart;
@@ -19,11 +29,15 @@ public abstract class ServerGUI extends BorderPane {
     protected final ImageView imageView;
     protected final Label label0;
     protected final Label label1;
+    private DbConnection.DbConnectionHandler dbconnection;
+    private MainServer mainServer;
+    ObservableList<PieChart.Data> pieChartData;
+    private ScheduledExecutorService scheduledExecutorService;
+    private boolean isFirstOpen = true;
 
     public ServerGUI() {
 
         anchorPane = new AnchorPane();
-        gameChart = new PieChart();
         serverPowerBtn = new RadioButton();
         label = new Label();
         anchorPane0 = new AnchorPane();
@@ -31,6 +45,19 @@ public abstract class ServerGUI extends BorderPane {
         label0 = new Label();
         label1 = new Label();
 
+        dbconnection = DbConnection.DbConnectionHandler.CreateConnection();
+        dbconnection.openConnection();
+        pieChartData = FXCollections.observableArrayList(
+                new PieChart.Data("Offline", dbconnection.getOFFlinePlayers()), // database connection should return these actual numbers 
+
+                new PieChart.Data("Online", dbconnection.getOnlinePlayers()) // 
+        );
+
+        gameChart = new PieChart(pieChartData);
+        gameChart.setVisible(false);
+        gameChart.setAnimated(false);
+        scheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
+        refreshPieChart();
         setPrefHeight(400.0);
         setPrefWidth(700.0);
         setStyle("-fx-background-color: #60408b;");
@@ -50,7 +77,7 @@ public abstract class ServerGUI extends BorderPane {
         serverPowerBtn.setLayoutX(14.0);
         serverPowerBtn.setLayoutY(13.0);
         serverPowerBtn.setMnemonicParsing(false);
-        serverPowerBtn.setText("Server ON");
+        serverPowerBtn.setText("Server OFF");
         serverPowerBtn.setTextFill(javafx.scene.paint.Color.valueOf("#60408b"));
         serverPowerBtn.setFont(new Font("System Bold", 18.0));
 
@@ -71,8 +98,8 @@ public abstract class ServerGUI extends BorderPane {
         imageView.setLayoutY(28.0);
         imageView.setPickOnBounds(true);
         imageView.setPreserveRatio(true);
-        imageView.setImage(new Image(getClass().getResource("../images/logoLa.png").toExternalForm()));
-
+//        imageView.setImage(new Image(getClass().getResource("../logoLa.png").toExternalForm()));
+//        imageView.setImage(new Image(getClass().getResource("../logoLa.png").toExternalForm()));   
         label0.setLayoutX(53.0);
         label0.setLayoutY(99.0);
         label0.setText("TicTacToe");
@@ -92,6 +119,47 @@ public abstract class ServerGUI extends BorderPane {
         anchorPane0.getChildren().add(imageView);
         anchorPane0.getChildren().add(label0);
         anchorPane0.getChildren().add(label1);
+        serverPowerBtn.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                if (serverPowerBtn.getText() == "Server OFF") {
+                    gameChart.setVisible(true);
+//     while server is on
 
+                    serverPowerBtn.setText("Server ON");
+                    if (isFirstOpen) {
+                        mainServer = MainServer.getInstance();
+                        mainServer.start();
+
+                        isFirstOpen = false;
+                    } else {
+                        mainServer.resume();
+                    }
+
+                } else { //       while server is off
+                    gameChart.setVisible(false);
+                    serverPowerBtn.setText("Server OFF");
+                    System.out.println("Server is down");
+                    mainServer.suspend();
+                    mainServer.closeClients();
+                }
+            }
+        });
+
+    }
+
+    public void refreshPieChart() {
+        scheduledExecutorService.scheduleAtFixedRate(new Runnable() {
+            @Override
+            public void run() {
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        pieChartData.set(0, new PieChart.Data("Online", MainServer.onlinePlayers)); //
+                        pieChartData.set(0, new PieChart.Data("Offline", MainServer.offlinePlayers)); // 
+                    }
+                });
+            }
+        }, 0, 1, TimeUnit.SECONDS);
     }
 }

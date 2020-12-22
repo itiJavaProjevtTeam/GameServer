@@ -154,8 +154,9 @@ public class GameHandler extends Thread {
                       System.out.print("Message is sent ooooooooooo ");
                       //while(!parsedMsg[0].equalsIgnoreCase("win") && !message.equalsIgnoreCase("tied") )
                       //{
-                       sendMessageToAll("canPlay."+parsedMsg[1]+"."+String.valueOf(flagTurnp1));
-                       sendMessageToAll("canPlay."+parsedMsg[2]+"."+String.valueOf(flagTurnp2));
+                       sendMessageToAll("StartGame."+parsedMsg[1]+"."+parsedMsg[2]+"."+String.valueOf(flagTurnp1)+".10.X.O");
+                       sendMessageToAll("StartGame."+parsedMsg[2]+"."+parsedMsg[1]+"."+String.valueOf(flagTurnp2)+".15.O.X");
+                       setTurn();
                       // setTurn();
 
                      // }
@@ -187,7 +188,13 @@ public class GameHandler extends Thread {
                 }
                  else if (parseMessage(message) == 15){
                       System.out.print("Message is "+message);
-                      sendMessageToAll(message);
+                       sendMessageToAll("lose."+parsedMsg[1]+"."+parsedMsg[2]);
+                      
+                }
+                  else if (parseMessage(message) == 16){
+                      System.out.print("Message is "+message);
+                       sendMessageToAll(message);
+                      
                 }
                 
                 /*
@@ -252,10 +259,6 @@ public class GameHandler extends Thread {
             return 8;
         }
 
-        if(parsedMsg[0].equals("CanPlay"))
-        {
-            return 9;
-        }
        
         if (parsedMsg[0].equals("RecordedGames")) {
             return 10;
@@ -276,13 +279,9 @@ public class GameHandler extends Thread {
         {
             return 15;
         }
-              if(parsedMsg[0].equals("loss"))
+              if(parsedMsg[0].equals("tied"))
         {
             return 16;
-        }
-          if(parsedMsg[0].equals("tied"))
-        {
-            return 17;
         }
         else {
             return 100; // signOut

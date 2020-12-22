@@ -31,7 +31,7 @@ public GameServer()
   }
     @Override
     public void start(Stage stage) throws Exception {
-        Parent root = new GameServerUI();
+        Parent root = new ServerGUI();
         
         Scene scene = new Scene(root);
         
