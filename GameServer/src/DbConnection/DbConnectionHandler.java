@@ -242,25 +242,34 @@ public class DbConnectionHandler {
     }
 
     //insert name of winner player in (Games) TABLE
-    public void SetWinner(long GameID, String Winner) throws SQLException {
+    public void SetWinner(long GameID, String Winner)  {
 
-        Statement stmt = con.createStatement();
-        String queryString = new String("UPDATE Games SET winner ='" + Winner + "' WHERE GID='" + GameID + "'");
-        int rs = stmt.executeUpdate(queryString);
-        stmt.close();
+        try {
+            Statement stmt = con.createStatement();
+            String queryString = new String("UPDATE Games SET winner ='" + Winner + "' WHERE GID='" + GameID + "'");
+            int rs = stmt.executeUpdate(queryString);
+            stmt.close();
+        } catch (SQLException ex) {
+            Logger.getLogger(DbConnectionHandler.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     //return game id 
-    public long GetGID() throws SQLException {
+    public long GetGID()  {
         long GID = 0;
-        Statement stmt = con.createStatement();
-        String queryString = new String("SELECT GID FROM Games ORDER BY GID Desc Limit 1");
-        ResultSet rs = stmt.executeQuery(queryString);
-        rs.next();
-        GID = rs.getLong(1);
-        stmt.close();
-        return GID;
-
+        try {
+            
+            Statement stmt = con.createStatement();
+            String queryString = new String("SELECT GID FROM Games ORDER BY GID Desc Limit 1");
+            ResultSet rs = stmt.executeQuery(queryString);
+            rs.next();
+            GID = rs.getLong(1);
+            stmt.close();
+            
+        } catch (SQLException ex) {
+            Logger.getLogger(DbConnectionHandler.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    return GID;
     }
 
     /* *****************************Handling Moves Table********************** */

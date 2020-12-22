@@ -164,10 +164,14 @@ public class GameHandler extends Thread {
                 } else if (parseMessage(message) == 15) {
                     System.out.print("Message is " + message);
                     sendMessageToAll("lose." + parsedMsg[1] + "." + parsedMsg[2]);
+                    addGame(parsedMsg[2],parsedMsg[1]);
+                    setWinner(getID(), parsedMsg[2]);
 
                 } else if (parseMessage(message) == 16) {
                     System.out.print("Message is " + message);
                     sendMessageToAll(message);
+                    addGame(parsedMsg[2],parsedMsg[1]);
+                    setWinner(getID(), null);
 
                 }
                  else if (parseMessage(message) == 17){
@@ -403,4 +407,19 @@ public class GameHandler extends Thread {
     public boolean checkIsPlaying(String playerName) {
         return dbconnection.Playing(playerName);
     }
+    
+    public void addGame (String player1, String player2 ){
+        dbconnection.AddGame(player1, player2);
+    }
+    
+    public long getID(){
+        return dbconnection.GetGID();
+    }
+    
+    public void setWinner (long id , String winner){
+        dbconnection.SetWinner(id, winner);
+    }
+    
+    
+    
 }
