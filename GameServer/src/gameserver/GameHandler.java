@@ -185,12 +185,6 @@ public class GameHandler extends Thread {
                       dbconnection.AddGame(parsedMsg[1],parsedMsg[2],parsedMsg[3],parsedMsg[4],parsedMsg[5]);
                   
                   }
-                  else
-                  {
-                      dbconnection.AddGame(parsedMsg[1],parsedMsg[2],parsedMsg[3],parsedMsg[4],parsedMsg[5]);
-                      dbconnection.AddGame(parsedMsg[1],parsedMsg[2],parsedMsg[3],parsedMsg[4],parsedMsg[6]);
-                  
-                  }
                 }
                 else if (parseMessage(message) == 18) {
                     System.out.println("Message is " + message);
