@@ -43,8 +43,7 @@ public class GameHandler extends Thread {
     String MovesPlayerName;
     boolean checkUserExistence;
     boolean checkValidPassword;
-    boolean flagTurnp1 = true;
-    boolean flagTurnp2 = false;
+    boolean flagTurn;
     private DbConnection.DbConnectionHandler dbconnection;
 
     static Vector<GameHandler> clientsVector = new Vector<GameHandler>();
@@ -57,6 +56,7 @@ public class GameHandler extends Thread {
 
             clientsVector.add(this);
             start();
+            flagTurn = true;
         } catch (IOException ex) {
             Logger.getLogger(GameHandler.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -81,7 +81,7 @@ public class GameHandler extends Thread {
                             addUser(parsedMsg[1], parsedMsg[2]);
                             ++MainServer.offlinePlayers;
                             updatePlayeStatus(parsedMsg[1]);
-                            System.out.print("Registered");
+                            System.out.println("Registered");
                             dataOutputStream.writeUTF("register done");
                         }
 
@@ -112,10 +112,10 @@ public class GameHandler extends Thread {
 
                 } else if (parseMessage(message) == 5) {
                     getOnLinePlayers(parsedMsg[1]);
-                    System.out.print("Player + score " + Pname + Score);
-                    dataOutputStream.writeUTF("PLAYERLIST."+parsedMsg[1]+"."+Pname + Score);
+                    System.out.println("Player + score " + Pname + Score);
+                    dataOutputStream.writeUTF("PLAYERLIST." + parsedMsg[1] + "." + Pname + Score);
 
-                    System.out.print("playerList send successfully");
+                    System.out.println("playerList send successfully");
                     dataOutputStream.flush();
 
                 } else if (parseMessage(message) == 6) {
@@ -128,48 +128,43 @@ public class GameHandler extends Thread {
                     ++MainServer.offlinePlayers;
 
                 } else if (parseMessage(message) == 8) {
-                    System.out.print("GID+P1+P2+Winner " + GID + P1 + P1Score + P2 + P2Score + Winner);
+                    System.out.println("GID+P1+P2+Winner " + GID + P1 + P1Score + P2 + P2Score + Winner);
                     dataOutputStream.writeUTF(GID + "_" + P1 + "_" + P1Score + "_" + P2 + "_" + P2Score + "_" + Winner);
-                    System.out.print("History send successfully");
+                    System.out.println("History send successfully");
                     dataOutputStream.flush();
 
                 } else if (parseMessage(message) == 9) {
                     System.out.println(message);
                     sendMessageToAll(message);
-                }
-                 else if (parseMessage(message) == 10) {
-                     System.out.print("Message is "+message);
-                     getRecordedGames(Integer.parseInt(parsedMsg[1]));
-                    System.out.print("Positions + Moves + PlayersName "+ symbol +  Positions + MovesPlayerName);
+                } else if (parseMessage(message) == 10) {
+                    System.out.println("Message is " + message);
+                    getRecordedGames(Integer.parseInt(parsedMsg[1]));
+                    System.out.println("Positions + Moves + PlayersName " + symbol + Positions + MovesPlayerName);
                     dataOutputStream.writeUTF(symbol + "_" + Positions + "_" + MovesPlayerName);
-                    System.out.print("Moves send successfully");
+                    System.out.println("Moves send successfully");
                     dataOutputStream.flush();
-                        }
-                else if (parseMessage(message) == 11){
-                    
-                     // dbconnection.updatePlaying(parsedMsg[1]);
-                     // dbconnection.updatePlaying(parsedMsg[2]);
-                      System.out.print("Message is "+message);
-                      sendMessageToAll(message);
-                      System.out.print("Message is sent ooooooooooo ");
-                      //while(!parsedMsg[0].equalsIgnoreCase("win") && !message.equalsIgnoreCase("tied") )
-                      //{
-                      //String.valueOf(flagTurnp1)
-                   
-                      // setTurn();
-                      // setTurn();
+                } else if (parseMessage(message) == 11) {
 
-                     // }
-                                      }
-                 else if (parseMessage(message) == 12){
-                      System.out.print("Message is "+message);
-                      sendMessageToAll(message);
-                      System.out.print("Message is sent ooooooooooo ");
-                }
-                 else if (parseMessage(message) == 13){
-                      System.out.print("Message is "+message);
-                      sendMessageToAll(message);
-                      System.out.print("Message is sent ooooooooooo ");
+                    // dbconnection.updatePlaying(parsedMsg[1]);
+                    // dbconnection.updatePlaying(parsedMsg[2]);
+                    System.out.println("Message is " + message);
+                    sendMessageToAll(message);
+                    System.out.println("Message is sent ooooooooooo ");
+                    //while(!parsedMsg[0].equalsIgnoreCase("win") && !message.equalsIgnoreCase("tied") )
+                    //{
+                    //String.valueOf(flagTurnp1)
+
+                    // setTurn();
+                    // setTurn();
+                    // }
+                } else if (parseMessage(message) == 12) {
+                    System.out.println("Message is " + message);
+                    sendMessageToAll(message);
+                    System.out.println("Message is sent ooooooooooo ");
+                } else if (parseMessage(message) == 13) {
+                    System.out.println("Message is " + message);
+                    sendMessageToAll(message);
+                    System.out.println("Message is sent ooooooooooo ");
                     /*  if(dbconnection.Playing(parsedMsg[1]))
                       {
                        dataOutputStream.writeUTF("Playing."  + parsedMsg[2] + "." + parsedMsg[1]);
@@ -180,30 +175,28 @@ public class GameHandler extends Thread {
                         sendMessageToAll(message);
                          System.out.print("Message is sent to @@@@@@@@@@@@ ");
                       }*/
+                } //add step
+                else if (parseMessage(message) == 14) {
+                    System.out.println("Message is " + message);
+                    sendMessageToAll(message);
+                    System.out.println("Message is sent $$$$$$$$$$ ");
+                } else if (parseMessage(message) == 15) {
+                    System.out.println("Message is " + message);
+                    sendMessageToAll("GameOnline.lose." + parsedMsg[2] + "." + parsedMsg[3]);
+
+                } else if (parseMessage(message) == 16) {
+                    System.out.println("Message is " + message);
+                    sendMessageToAll(message);
+
+                } else if (parseMessage(message) == 17) {
+                    System.out.println("Message is " + message);
+                    sendMessageToAll("StartGame." + parsedMsg[1] + "." + "true" + ".10.X.O." + parsedMsg[2] + "." + "false" + ".15.O.X");
+                    // setTurn();
+                    // sendMessageToAll("StartGame."+parsedMsg[2]+"."+parsedMsg[1]+"."+"true"+".15.O.X");
+                    System.out.println("StartGame." + parsedMsg[1] + "." + "true" + ".10.X.O" + parsedMsg[2] + "." + "false" + ".15.O.X");
+                    // System.out.print("StartGame."+parsedMsg[2]+"."+parsedMsg[1]+"."+"true"+".15.O.X");
                 }
-                 //add step
-                 else if (parseMessage(message) == 14){
-                      System.out.print("Message is "+message);
-                      sendMessageToAll(message);
-                }
-                 else if (parseMessage(message) == 15){
-                      System.out.print("Message is "+message);
-                       sendMessageToAll("lose."+parsedMsg[1]+"."+parsedMsg[2]);
-                      
-                }
-                  else if (parseMessage(message) == 16){
-                      System.out.print("Message is "+message);
-                       sendMessageToAll(message);
-                      
-                }
-                  else if (parseMessage(message) == 17){
-                       System.out.print("Message is "+message);
-                       sendMessageToAll("StartGame."+parsedMsg[1]+"."+parsedMsg[2]+"."+"false"+".10.X.O");
-                       sendMessageToAll("StartGame."+parsedMsg[2]+"."+parsedMsg[1]+"."+"true"+".15.O.X");
-                       System.out.print("StartGame."+parsedMsg[1]+"."+parsedMsg[2]+"."+"false"+".10.X.O");
-                      System.out.print("StartGame."+parsedMsg[2]+"."+parsedMsg[1]+"."+"true"+".15.O.X");
-                }
-                
+
                 /*
                 dataOutputStream.flush();    // send the message
                 dataOutputStream.close();  */  // close the stream
@@ -221,6 +214,7 @@ public class GameHandler extends Thread {
         for (GameHandler sh : clientsVector) {
 
             sh.dataOutputStream.writeUTF(msg);
+            System.out.println("qqqqqqqqqqqqqqqqqqqqqqqqqqqq");
         }
         // when signed in online player +1
         // when signed out offLine Players + 1 , online -1
@@ -266,35 +260,36 @@ public class GameHandler extends Thread {
             return 8;
         }
 
-       
         if (parsedMsg[0].equals("RecordedGames")) {
             return 10;
         }
         if (parsedMsg[0].equals("Accept")) {
             return 11;
-        }if (parsedMsg[0].equals("Reject")) {
+        }
+        if (parsedMsg[0].equals("Reject")) {
             return 12;
-        }if(parsedMsg[0].equals("DUWTP"))
-        {
+        }
+        if (parsedMsg[0].equals("DUWTP")) {
             return 13;
         }
-            if(parsedMsg[0].equals("play"))
-        {
-            return 14;
+        if (parsedMsg[0].equals("GameOnline")) {
+            if (parsedMsg[1].equals("play")) {
+                return 14;
+            }
         }
-              if(parsedMsg[0].equals("win"))
-        {
-            return 15;
+        if (parsedMsg[0].equals("GameOnline")) {
+            if (parsedMsg[1].equals("win")) {
+                return 15;
+            }
         }
-              if(parsedMsg[0].equals("tied"))
-        {
-            return 16;
+        if (parsedMsg[0].equals("GameOnline")) {
+            if (parsedMsg[1].equals("tied")) {
+                return 16;
+            }
         }
-               if(parsedMsg[0].equals("StartGame"))
-        {
+        if (parsedMsg[0].equals("StartGame")) {
             return 17;
-        }     
-        else {
+        } else {
             return 100; // signOut
         }
 
@@ -315,7 +310,6 @@ public class GameHandler extends Thread {
         return dbconnection.Signin(userName, password);
     }
      */
-
     public boolean checkUserExistence(String username) {
         if (dbconnection.checkUserExistence(username)) {
             return true;
@@ -344,12 +338,10 @@ public class GameHandler extends Thread {
         } else {
             try {
                 while (s.next()) {
-                    if(s.getString(1) != PlayerName)
-                    {
-                    Pname += s.getString(1) + ".";
-                    Score += String.valueOf(s.getInt(2)) + ".";
+                    if (s.getString(1) != PlayerName) {
+                        Pname += s.getString(1) + ".";
+                        Score += String.valueOf(s.getInt(2)) + ".";
                     }
-                     
 
                 }
             } catch (SQLException ex) {
@@ -423,19 +415,13 @@ public class GameHandler extends Thread {
             Logger.getLogger(GameHandler.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
-    public void setTurn()
-    {
-        
-        if(flagTurnp1 == true)
-            flagTurnp1 = false;
-        else
-            flagTurnp1 = true;
-        
-        if(flagTurnp2 == false)
-            flagTurnp2 = true;
-        else
-            flagTurnp2 = false;
+
+    public void setTurn() {
+        if (flagTurn) {
+            flagTurn = false;
+        } else {
+            flagTurn = true;
+        }
     }
 
 }
