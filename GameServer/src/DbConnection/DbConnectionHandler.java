@@ -225,15 +225,34 @@ public class DbConnectionHandler {
         return scores;
     }
     
+     public int GetScoreofPlayer(String Pname) {
+        int score = 0;
+        try {
+            ResultSet rs = null;
+            String queryString = new String("Select Score FROM Players");
+            PreparedStatement stmt = con.prepareStatement(queryString,ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_READ_ONLY);
+            rs = stmt.executeQuery();         
+            rs.beforeFirst();
+            while (rs.next()) {
+                rs.getLong(1);
+            }
+            stmt.close();
+
+        } catch (SQLException ex) {
+            Logger.getLogger(DbConnectionHandler.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return score;
+    }
+    
     
 
     /* *****************************Handling Games Table********************** */
     //add name of two players to (Games) TABLE
-    public void AddGame(String P1, String P2) {
+    public void AddGame(String P1, String P2,String Winner,String Moves,String RecPlayer) {
 
         try {
             Statement stmt = con.createStatement();
-            String queryString = new String("insert into Games (player1,player2) values('" + P1 + "','" + P2 + "')");
+            String queryString = new String("insert into Games (player1,player2,Winner,Moves,RecPlayer) values('" + P1 + "','" + P2 + "','"+Winner+"','"+Moves+"','"+RecPlayer+"')");
             int rs = stmt.executeUpdate(queryString);
             stmt.close();
         } catch (SQLException ex) {

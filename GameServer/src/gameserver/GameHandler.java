@@ -166,23 +166,40 @@ public class GameHandler extends Thread {
                 } else if (parseMessage(message) == 15) {
                     System.out.println("Message is " + message);
                     sendMessageToAll("GameOnline.lose." + parsedMsg[2] + "." + parsedMsg[3]);
-					 addGame(parsedMsg[3],parsedMsg[2]);
-                    setWinner(getID(), parsedMsg[3]);
+		    //addGame(parsedMsg[3],parsedMsg[2]);
+                    //setWinner(getID(), parsedMsg[3]);
+                    dbconnection.UpdateScore(parsedMsg[3],Integer.parseInt(parsedMsg[4]));
+                    System.out.println("WinnerPlayer + Score"+parsedMsg[3]+parsedMsg[4]);
 
                 } else if (parseMessage(message) == 16) {
                     System.out.println("Message is " + message);
                     sendMessageToAll(message);
-                    addGame(parsedMsg[2],parsedMsg[1]);
-                    setWinner(getID(), null);
-                } else if (parseMessage(message) == 17) {
+                    //addGame(parsedMsg[2],parsedMsg[1]);
+                    //setWinner(getID(), null);
+                } 
+                else if(parseMessage(message) == 17)
+                {
+                  System.out.println("Message is " + message);
+                  if(parsedMsg[6] != null)
+                  {
+                      dbconnection.AddGame(parsedMsg[1],parsedMsg[2],parsedMsg[3],parsedMsg[4],parsedMsg[5]);
+                  
+                  }
+                  else
+                  {
+                      dbconnection.AddGame(parsedMsg[1],parsedMsg[2],parsedMsg[3],parsedMsg[4],parsedMsg[5]);
+                      dbconnection.AddGame(parsedMsg[1],parsedMsg[2],parsedMsg[3],parsedMsg[4],parsedMsg[6]);
+                  
+                  }
+                }
+                else if (parseMessage(message) == 18) {
                     System.out.println("Message is " + message);
-                    sendMessageToAll("StartGame." + parsedMsg[1] + "." + "true" + ".10.X.O." + parsedMsg[2] + "." + "false" + ".15.O.X");
+                    sendMessageToAll("StartGame." + parsedMsg[1] + "." + "false" + "."+String.valueOf(getScore(parsedMsg[1]))+".X.O." + parsedMsg[2] + "." + "true" +"."+String.valueOf(getScore(parsedMsg[2]))+".O.X");
                     // setTurn();
                     // sendMessageToAll("StartGame."+parsedMsg[2]+"."+parsedMsg[1]+"."+"true"+".15.O.X");
-                    System.out.println("StartGame." + parsedMsg[1] + "." + "true" + ".10.X.O" + parsedMsg[2] + "." + "false" + ".15.O.X");
+                    System.out.println("StartGame." + parsedMsg[1] + "." + "false" + "."+String.valueOf(getScore(parsedMsg[1]))+".X.O." + parsedMsg[2] + "." + "true" +"."+String.valueOf(getScore(parsedMsg[2]))+".O.X");
                     // System.out.print("StartGame."+parsedMsg[2]+"."+parsedMsg[1]+"."+"true"+".15.O.X");
                 }  
- 
             } catch (IOException ex) {
                 stop();
                 Logger.getLogger(GameHandler.class.getName()).log(Level.SEVERE, null, ex);
@@ -241,8 +258,9 @@ public class GameHandler extends Thread {
             return 8;
         }
 
-        if (parsedMsg[0].equals("RecordedGames")) {
-            return 10;
+        if (parsedMsg[0].equals("GameOnline")) {
+             if(parsedMsg[1].equals("RecordedGames"))
+                 return 10;
         }
         if (parsedMsg[0].equals("Accept")) {
             return 11;
@@ -268,9 +286,18 @@ public class GameHandler extends Thread {
                 return 16;
             }
         }
+        
+        
+        if(parsedMsg[0].equals("GameOnline"))
+        {
+            if(parsedMsg[1].equals("EndGame")) {
+                return 17;
+            }
+        }
         if (parsedMsg[0].equals("StartGame")) {
-            return 17;
-        } else {
+            return 18;
+        }
+        else {
             return 100; // signOut
         }
 
@@ -399,9 +426,6 @@ public class GameHandler extends Thread {
         return dbconnection.Playing(playerName);
     }
     
-    public void addGame (String player1, String player2 ){
-        dbconnection.AddGame(player1, player2);
-    }
     
     public long getID(){
         return dbconnection.GetGID();
@@ -409,6 +433,12 @@ public class GameHandler extends Thread {
     
     public void setWinner (long id , String winner){
         dbconnection.SetWinner(id, winner);
+    }
+
+    private int getScore(String Pname) {
+        int score = 0;
+        score = dbconnection.GetScoreofPlayer(Pname);
+        return score;
     }
     
     
