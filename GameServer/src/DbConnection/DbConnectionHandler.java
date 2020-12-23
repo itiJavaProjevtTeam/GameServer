@@ -136,8 +136,9 @@ public class DbConnectionHandler {
     public void updatePlaying(String Pname)
     {
     try {
-            Statement stmt = con.createStatement();
-            String queryString = new String("UPDATE Players SET Playing = true WHERE Pname='" + Pname + "'");
+            String queryString = new String("UPDATE Players SET Playing = true WHERE Pname=?");
+            PreparedStatement stmt = con.prepareStatement(queryString);
+            stmt.setString(1, Pname);
             int rs = stmt.executeUpdate(queryString);
             stmt.close();
         } catch (SQLException ex) {
@@ -145,7 +146,19 @@ public class DbConnectionHandler {
         }
     
     }
+    public void updateNotPlaying(String Pname)
+    {
+    try {
+            String queryString = new String("UPDATE Players SET Playing = true WHERE Pname=?");
+            PreparedStatement stmt = con.prepareStatement(queryString);
+            stmt.setString(1, Pname);
+            int rs = stmt.executeUpdate(queryString);
+            stmt.close();
+        } catch (SQLException ex) {
+            Logger.getLogger(DbConnectionHandler.class.getName()).log(Level.SEVERE, null, ex);
+        }
     
+    }
     
     
 
@@ -216,34 +229,47 @@ public class DbConnectionHandler {
 
     /* *****************************Handling Games Table********************** */
     //add name of two players to (Games) TABLE
-    public void AddGame(String P1, String P2) throws SQLException {
+    public void AddGame(String P1, String P2) {
 
-        Statement stmt = con.createStatement();
-        String queryString = new String("insert into Games (player1,player2) values('" + P1 + "','" + P2 + "')");
-        int rs = stmt.executeUpdate(queryString);
-        stmt.close();
+        try {
+            Statement stmt = con.createStatement();
+            String queryString = new String("insert into Games (player1,player2) values('" + P1 + "','" + P2 + "')");
+            int rs = stmt.executeUpdate(queryString);
+            stmt.close();
+        } catch (SQLException ex) {
+            Logger.getLogger(DbConnectionHandler.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     //insert name of winner player in (Games) TABLE
-    public void SetWinner(long GameID, String Winner) throws SQLException {
+    public void SetWinner(long GameID, String Winner)  {
 
-        Statement stmt = con.createStatement();
-        String queryString = new String("UPDATE Games SET winner ='" + Winner + "' WHERE GID='" + GameID + "'");
-        int rs = stmt.executeUpdate(queryString);
-        stmt.close();
+        try {
+            Statement stmt = con.createStatement();
+            String queryString = new String("UPDATE Games SET winner ='" + Winner + "' WHERE GID='" + GameID + "'");
+            int rs = stmt.executeUpdate(queryString);
+            stmt.close();
+        } catch (SQLException ex) {
+            Logger.getLogger(DbConnectionHandler.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     //return game id 
-    public long GetGID() throws SQLException {
+    public long GetGID()  {
         long GID = 0;
-        Statement stmt = con.createStatement();
-        String queryString = new String("SELECT GID FROM Games ORDER BY GID Desc Limit 1");
-        ResultSet rs = stmt.executeQuery(queryString);
-        rs.next();
-        GID = rs.getLong(1);
-        stmt.close();
-        return GID;
-
+        try {
+            
+            Statement stmt = con.createStatement();
+            String queryString = new String("SELECT GID FROM Games ORDER BY GID Desc Limit 1");
+            ResultSet rs = stmt.executeQuery(queryString);
+            rs.next();
+            GID = rs.getLong(1);
+            stmt.close();
+            
+        } catch (SQLException ex) {
+            Logger.getLogger(DbConnectionHandler.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    return GID;
     }
 
     /* *****************************Handling Moves Table********************** */
@@ -365,7 +391,7 @@ public class DbConnectionHandler {
     {
         ResultSet rs  = null;
         try {
-            String queryString = new String("Select Pname,Score FROM Players where status = true ");
+            String queryString = new String("Select Pname,Score FROM Players where status = true And Playing = false");
             PreparedStatement stmt = con.prepareStatement(queryString,ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_READ_ONLY);
             rs = stmt.executeQuery();
         } catch (SQLException ex) {
