@@ -302,10 +302,10 @@ public class DbConnectionHandler {
     }
 
     //Recorded Moves
-    public ResultSet GetMoves(int GID) throws SQLException {
+    public ResultSet GetMoves(String Rpname,int GID) throws SQLException {
         ResultSet rs = null;
         Statement stmt = con.createStatement();
-        String queryString = new String("select * from Moves where GID=" + GID);
+        String queryString = new String("select Moves from Games where GID=" + GID+"AND RecPlayer ="+Rpname+"')");
         rs = stmt.executeQuery(queryString);
         return rs;
     }

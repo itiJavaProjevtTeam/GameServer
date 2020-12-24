@@ -44,6 +44,7 @@ public class GameHandler extends Thread {
     boolean checkUserExistence;
     boolean checkValidPassword;
     boolean flagTurn;
+    String moves;
     private DbConnection.DbConnectionHandler dbconnection;
 
     static Vector<GameHandler> clientsVector = new Vector<GameHandler>();
@@ -138,9 +139,9 @@ public class GameHandler extends Thread {
                     sendMessageToAll(message);
                 } else if (parseMessage(message) == 10) {
                     System.out.println("Message is " + message);
-                    getRecordedGames(Integer.parseInt(parsedMsg[1]));
-                    System.out.println("Positions + Moves + PlayersName " + symbol + Positions + MovesPlayerName);
-                    dataOutputStream.writeUTF(symbol + "_" + Positions + "_" + MovesPlayerName);
+                    getRecordedGames(parsedMsg[1],Integer.parseInt(parsedMsg[2]));
+                    System.out.println("moves"+moves);
+                    dataOutputStream.writeUTF(moves);
                     System.out.println("Moves send successfully");
                     dataOutputStream.flush();
                 } else if (parseMessage(message) == 11) {
@@ -179,12 +180,9 @@ public class GameHandler extends Thread {
                 } 
                 else if(parseMessage(message) == 17)
                 {
-                  System.out.println("Message is " + message);
-                  if(parsedMsg[6] != null)
-                  {
-                      dbconnection.AddGame(parsedMsg[1],parsedMsg[2],parsedMsg[3],parsedMsg[4],parsedMsg[5]);
-                  
-                  }
+                  System.out.println("Message is " + message);                
+                   dbconnection.AddGame(parsedMsg[1],parsedMsg[2],parsedMsg[3],parsedMsg[4],parsedMsg[5]);
+                                  
                 }
                 else if (parseMessage(message) == 18) {
                     System.out.println("Message is " + message);
@@ -252,10 +250,10 @@ public class GameHandler extends Thread {
             return 8;
         }
 
-        if (parsedMsg[0].equals("GameOnline")) {
-             if(parsedMsg[1].equals("RecordedGames"))
+       
+        if(parsedMsg[0].equals("RecordedGames"))
                  return 10;
-        }
+        
         if (parsedMsg[0].equals("Accept")) {
             return 11;
         }
@@ -386,21 +384,18 @@ public class GameHandler extends Thread {
 
     }
 
-    private void getRecordedGames(int gid) {
+    private void getRecordedGames(String Rname,int gid) {
+        moves = "";
         try {
-            ResultSet s = dbconnection.GetMoves(gid);
-            Positions = "";
-            symbol = "";
-            MovesPlayerName = "";
+            ResultSet s = dbconnection.GetMoves(Rname,gid);
+            
             if (s == null) {
                 System.out.println("no data in table");
 
             } else {
                 try {
                     while (s.next()) {
-                        symbol += s.getString(5) + ".";
-                        Positions += String.valueOf(s.getInt(3)) + ".";
-                        MovesPlayerName += s.getString(4) + ".";
+                        moves=s.getString(1);
 
                     }
                 } catch (SQLException ex) {
