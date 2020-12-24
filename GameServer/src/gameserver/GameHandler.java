@@ -169,8 +169,8 @@ public class GameHandler extends Thread {
                     sendMessageToAll("GameOnline.lose." + parsedMsg[2] + "." + parsedMsg[3]);
 		    //addGame(parsedMsg[3],parsedMsg[2]);
                     //setWinner(getID(), parsedMsg[3]);
-                    dbconnection.UpdateScore(parsedMsg[3],Integer.parseInt(parsedMsg[4]));
-                    System.out.println("WinnerPlayer + Score"+parsedMsg[3]+parsedMsg[4]);
+                    dbconnection.UpdateScore(parsedMsg[3],5);
+                    System.out.println("WinnerPlayer + Score"+parsedMsg[2]+parsedMsg[3]);
 
                 } else if (parseMessage(message) == 16) {
                     System.out.println("Message is " + message);
